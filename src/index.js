@@ -25,10 +25,9 @@ import galleryRouter from './routes/galleries'
 
 const development = process.env.NODE_ENV === 'development'
 
-const devHost = process.env.DEV_HOST
-
-// multiple allow host if desired
-const productionHost = process.env.PRODUCTION_HOST
+// add multiple allow hosts if desired
+// example const allowHosts = ["apple.host.com", "peaches.host.com", "orange.host.com"]
+const allowHosts = [process.env.PRODUCTION_HOST, process.env.DEV_HOST]
 
 const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
 
@@ -111,11 +110,10 @@ app.use(async function responseTime(ctx, next) {
 app.use(cors({
   origin: (ctx) => {
     //multiple allow host could be added here
-    const validDomains = [ devHost ]
-    if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
+    if (allowHosts.indexOf(ctx.request.header.origin) !== -1) {
       return ctx.request.header.origin
     }
-    return validDomains[0]; // we can't return void, so let's return one of the valid domains
+    return allowHosts[0]; // we can't return void, so let's return one of the valid domains
   },
 }))
 
