@@ -64,7 +64,10 @@ class SeedData {
     }
 }
 
-const dbUri = process.env.NODE_ENV === 'development' ? process.env.DB_LOCAL : process.env.DB_URI
+const dbUri =
+    process.env.NODE_ENV === 'development'
+        ? process.env.DB_LOCAL
+        : process.env.DB_URI
 mongoose
     .connect(dbUri, {
         useCreateIndex: true,

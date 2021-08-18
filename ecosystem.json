@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "papaslive-api",
+      "name": "app-api-name",
       "script": "build/index.js",
       "instances": 1,
       "exec_mode": "cluster"

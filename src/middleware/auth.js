@@ -22,7 +22,6 @@ async function getJwtToken(ctx, next) {
 async function validateJWT(ctx, next) {
     const secret = process.env.JWT_SECRET
     const token = await getJwtToken(ctx)
-
     if (!secret || !token)
         ctx.throw(401, { message: 'Access to resource not allow' })
     //jsonwebtoken.verify also checks for expiration
