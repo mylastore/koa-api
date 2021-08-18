@@ -4,7 +4,7 @@
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import koaStatic from 'koa-static'
-import cors from 'kcors'
+import cors from '@koa/cors'
 import { logger } from './logs/logs'
 import userAgent from 'koa-useragent'
 import ratelimit from 'koa-ratelimit'
@@ -25,7 +25,10 @@ import galleryRouter from './routes/galleries'
 
 const development = process.env.NODE_ENV === 'development'
 
-const allowSites = development ? process.env.DEV_HOST : process.env.PRODUCTION_HOST
+const devHost = process.env.DEV_HOST
+
+// multiple allow host if desired
+const productionHost = process.env.PRODUCTION_HOST
 
 const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
 
@@ -105,11 +108,16 @@ app.use(async function responseTime(ctx, next) {
 })
 
 //For cors with options
-app.use(
-    cors({
-        origins: [allowSites],
-    })
-)
+app.use(cors({
+  origin: (ctx) => {
+    //multiple allow host could be added here
+    const validDomains = [ devHost ]
+    if (validDomains.indexOf(ctx.request.header.origin) !== -1) {
+      return ctx.request.header.origin
+    }
+    return validDomains[0]; // we can't return void, so let's return one of the valid domains
+  },
+}))
 
 // For useragent(browser) detection
 app.use(userAgent)
