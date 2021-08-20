@@ -7,6 +7,8 @@ import mongoError from '../middleware/mongoErrors'
 import { rmdir } from '../middleware/utils'
 import { isObjectEmpty } from '../middleware/validate'
 
+const perPage = 5
+
 class BlogController {
     constructor() {
         this.galID = []
@@ -14,9 +16,7 @@ class BlogController {
 
     //********* helper functions
     async getPublishBlogs(ctx) {
-        const body = ctx.request.body
-        const limit = body.limit ? parseInt(body.limit) : 10
-        const skip = body.skip ? parseInt(body.skip) : 0
+        const page = ctx.params.page || 1
 
         try {
             return await Blog.find({ published: true })
@@ -24,8 +24,8 @@ class BlogController {
                 .populate('tags', '_id name slug')
                 .populate('postedBy', '_id name username')
                 .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit)
+                .skip(perPage * page - perPage)
+                .limit(perPage)
                 .select(
                     '_id title avatar slug visited excerpt categories tags postedBy createdAt'
                 )
@@ -51,13 +51,6 @@ class BlogController {
         }
     }
 
-    async getAllPublishBlogCount() {
-        try {
-            return await Blog.countDocuments({ published: true })
-        } catch (err) {
-            return err
-        }
-    }
     //**************
 
     async blogImages(ctx, next) {
@@ -230,14 +223,14 @@ class BlogController {
 
     async getAllPublishedBlogs(ctx) {
         try {
+            const totalItems = await Blog.countDocuments({ published: true })
             const blogs = await this.getPublishBlogs(ctx)
-
             return (ctx.body = {
                 blogs: blogs,
                 categories: await this.getCategories(),
                 tags: await this.getTags(),
-                size: blogs.length,
-                total: await this.getAllPublishBlogCount(),
+                totalItems: totalItems,
+                perPage: perPage,
             })
         } catch (err) {
             ctx.throw(422, err)

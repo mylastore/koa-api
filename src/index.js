@@ -1,6 +1,8 @@
 'use strict'
 // @ts-check
 
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import koaStatic from 'koa-static'
@@ -107,15 +109,17 @@ app.use(async function responseTime(ctx, next) {
 })
 
 //For cors with options
-app.use(cors({
-  origin: (ctx) => {
-    //multiple allow host could be added here
-    if (allowHosts.indexOf(ctx.request.header.origin) !== -1) {
-      return ctx.request.header.origin
-    }
-    return allowHosts[0]; // we can't return void, so let's return one of the valid domains
-  },
-}))
+app.use(
+    cors({
+        origin: ctx => {
+            //multiple allow host could be added here
+            if (allowHosts.indexOf(ctx.request.header.origin) !== -1) {
+                return ctx.request.header.origin
+            }
+            return allowHosts[0] // we can't return void, so let's return one of the valid domains
+        },
+    })
+)
 
 // For useragent(browser) detection
 app.use(userAgent)

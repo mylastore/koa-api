@@ -45,7 +45,7 @@ router.post('/api/blog/related', async ctx => {
     await controller.getRelatedBlogs(ctx)
 })
 
-router.post('/api/blogs', async ctx => {
+router.post('/api/blogs/:page', async ctx => {
     await controller.getAllPublishedBlogs(ctx)
 })
 
