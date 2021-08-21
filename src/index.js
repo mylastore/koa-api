@@ -29,7 +29,8 @@ const development = process.env.NODE_ENV === 'development'
 
 // add multiple allow hosts if desired
 // example const allowHosts = ["apple.host.com", "peaches.host.com", "orange.host.com"]
-const allowHosts = [process.env.PRODUCTION_HOST]
+const host = development ? process.env.LOCAL_HOST : process.env.PRODUCTION_HOST
+const allowHosts = [host]
 
 const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
 
