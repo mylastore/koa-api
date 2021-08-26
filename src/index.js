@@ -24,6 +24,7 @@ import blogRouter from './routes/blog'
 import authRouter from './routes/auth'
 import bookingRouter from './routes/booking'
 import galleryRouter from './routes/galleries'
+import trackRouter from './routes/track'
 
 const development = process.env.NODE_ENV === 'development'
 
@@ -179,5 +180,7 @@ app.use(bookingRouter.routes())
 app.use(bookingRouter.allowedMethods())
 app.use(galleryRouter.routes())
 app.use(galleryRouter.allowedMethods())
+app.use(trackRouter.routes())
+app.use(trackRouter.allowedMethods())
 
 export default app
