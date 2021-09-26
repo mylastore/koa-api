@@ -1,21 +1,23 @@
 import crypto from 'crypto'
 import sendGridMail from '@sendgrid/mail'
-import { number } from 'sharp/lib/is'
+import {number} from 'sharp/lib/is'
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY)
+const development = process.env.NODE_ENV === 'development'
 
 //sendgrid templates
-const bookingTemplate = process.env.SENDGRID_BOOKING
-const supportTemplate = process.env.SENDGRID_SUPPORT
+const bookingTemplate = process.env.SENDGRID_BOOKING_TEMPLATE
+const supportTemplate = process.env.SENGRID_SUPPORT_TEMPLATE
+const authorTemplate = process.env.SENGRID_AUTHOR_EMAIL_TEMPLATE
 
 //sendgrid
 const appEmail = process.env.APP_EMAIL
 const appSecondEmail = process.env.APP_SECOND_EMAIL
 const appThirdEmail = process.env.APP_THIRD_EMAIL
-const appUrl = process.env.REQUEST_HOST
+const host = development ? process.env.LOCAL_REQUEST_HOST : process.env.PRODUCTION_REQUEST_HOST
 const appName = process.env.APP_NAME
 
-export async function newAppointment (data) {
+export async function newAppointment(data) {
   const payload = {
     from: appEmail,
     to: [appEmail, appSecondEmail, appThirdEmail],
@@ -34,22 +36,24 @@ export async function newAppointment (data) {
   return await sendGridMail.send(payload)
 }
 
-export async function accountActivationEmail (email, token) {
-  const link = `${appUrl}/user/activation/${token}`
+export async function accountActivationEmail(email, token) {
+  const link = `${host}/user/activation/${token}`
   const payload = {
     to: email,
     from: appEmail,
     subject: 'Account Activation',
     html: `
-            <strong>Welcome to  ${appName}.<br/><br/> Please click on the button below to activate your account. If you did not request this, please ignore this email.<br/><br/></strong>
+            <p>Welcome to  ${appName}.</p>
+            <p>Please click on the button below to activate your account.</p>
+            <p>If you did not request this, please ignore this email and <strong style="color: red;">do not</strong> activate this account.</p>
             <a href="${link}">ACCOUNT ACTIVATION LINK</a>
           `,
   }
   return await sendGridMail.send(payload)
 }
 
-export async function sendForgotPassword (email, token) {
-  const link = `${appUrl}/user/reset/${token}`
+export async function sendForgotPassword(email, token) {
+  const link = `${host}/user/reset/${token}`
   const payload = {
     to: email,
     from: appEmail, // Change to your verified sender
@@ -62,7 +66,7 @@ export async function sendForgotPassword (email, token) {
   return await sendGridMail.send(payload)
 }
 
-export async function sendNewUserEmail (name, email) {
+export async function sendNewUserEmail(name, email) {
   const msg = {
     to: appEmail,
     from: appEmail, // Change to your verified sender
@@ -76,28 +80,32 @@ export async function sendNewUserEmail (name, email) {
   return await sendGridMail.send(msg)
 }
 
-export async function sendSupportEmail (data) {
-  let { name, email, message, phone } = data
-
-  const payload = {
-    to: [appEmail],
-    from: appEmail,
-    subject: `Support from ${appName}`,
-    template_id: supportTemplate,
-    dynamic_template_data: {
-      name: name,
-      email: email,
-      phone: phone,
-      message: message,
-      appUrl: appUrl,
-      appName: appName,
-    },
+export async function sendSupportEmail(data) {
+  try {
+    const payload = {
+      to: [appEmail],
+      from: data.email,
+      subject: `Support from ${appName}`,
+      template_id: supportTemplate,
+      dynamic_template_data: {
+        name: data.name,
+        email: data.email,
+        company: data.company,
+        phone: data.phone,
+        content: data.content,
+        appUrl: host,
+        appName: appName,
+      },
+    }
+    return await sendGridMail.send(payload)
+  } catch (err) {
+    console.log('error? ', err.response.body)
   }
-  return await sendGridMail.send(payload)
+
 }
 
-export async function sendAuthorEmail (data) {
-  let { name, email, message, authorEmail } = data
+export async function sendAuthorEmail(data) {
+  let {name, email, message, authorEmail} = data
   const emailList = [authorEmail]
 
   const payload = {
@@ -105,19 +113,19 @@ export async function sendAuthorEmail (data) {
     from: email,
     subject: `Someone message you from ${appName}`,
     text: `Message received from:  \n Name: ${name} \n Email: ${email} \n Message: ${message}`,
-    template_id: 'd-db32c2ca9cf94a47ac47f403a7778db2',
+    template_id: authorTemplate,
     dynamic_template_data: {
       name: name,
       email: email,
       message: message,
-      appUrl: appUrl,
+      appUrl: host,
       appName: appName,
     },
   }
   return await sendGridMail.send(payload)
 }
 
-export function gravatar (email) {
+export function gravatar(email) {
   const size = 200
   if (!email) return `https://gravatar.com/avatar/?s=${size}&d-mp`
   const md5 = crypto
@@ -127,15 +135,15 @@ export function gravatar (email) {
   return `https://gravatar.com/avatar/${md5}?S=${size}&d=mp`
 }
 
-export function parseJsonToObject (str) {
+export function parseJsonToObject(str) {
   try {
-    return  JSON.parse(str)
+    return JSON.parse(str)
   } catch (error) {
     return {}
   }
 }
 
-export function generateID (strLength) {
+export function generateID(strLength) {
   // Create a string of random alphanumeric characters, of a given length
   strLength =
     typeof strLength === 'number' && strLength > 0 ? strLength : false
@@ -161,7 +169,7 @@ export function generateID (strLength) {
   }
 }
 
-export function generateExcerpt (str, count) {
+export function generateExcerpt(str, count) {
   if (str && str.length > count) {
     return str.substring(0, count) + '...'
   }

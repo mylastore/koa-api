@@ -7,7 +7,7 @@ import {
     sendNewUserEmail,
 } from '../middleware/utils'
 import _data from '../middleware/data'
-import shortId from 'shortid'
+import nanoid from 'nanoid'
 import mongoError from '../middleware/mongoErrors'
 import jwt from 'jsonwebtoken'
 import { OAuth2Client } from 'google-auth-library'
@@ -69,7 +69,7 @@ class UserController {
             }
             const { name, email, password } = decoded
             const avatar = gravatar(email)
-            const username = shortId.generate()
+            const username = nanoid(6)
             const obj = {
                 name,
                 email,
@@ -132,12 +132,14 @@ class UserController {
                 ctx.throw(422, { message: 'Password is invalid' })
             }
             const authUser = user.toAuthJSON()
-            ctx.cookies.set('token', authUser.token, {
-                expiresIn: sessionExpiration,
-                sameSite: 'lax',
-                httpOnly: true,
-            })
-            return (ctx.body = authUser)
+            if(authUser){
+                ctx.cookies.set('token', authUser.token, {
+                    expiresIn: sessionExpiration,
+                    sameSite: 'lax',
+                    httpOnly: true,
+                })
+                return (ctx.body = authUser)
+            }
         } catch (error) {
             ctx.throw(422, error)
         }
@@ -170,7 +172,7 @@ class UserController {
                 return (ctx.body = authUser)
             } else {
                 const avatar = await gravatar(email)
-                const username = await shortId.generate()
+                const username = await nanoid(6)
                 const password = at_hash + process.env.GOOGLE_AUTH_PASSWORD_EXT
                 const user = new User({
                     name,
@@ -247,7 +249,7 @@ class UserController {
         await jwt.verify(
             passwordResetToken,
             passwordResetSecrete,
-            async function(err, decoded) {
+            async function(err) {
                 if (err) {
                     ctx.throw(
                         401,
@@ -391,7 +393,7 @@ class UserController {
 
     // ADMIN USER CONTROLLER
     async adminGetUsers(ctx) {
-        const perPage = 2
+        const perPage = 10
         const page = ctx.params.page || 1
         try {
             const users = await User.find({})
@@ -472,16 +474,15 @@ class UserController {
         try {
             const user = await User.findOne({
                 username: ctx.params.username,
-            }).select('_id username name email avatar crfeatedAt')
+            }).select('_id username name email avatar createdAt')
 
-            const blogs = await Blog.find({ postedBy: user._id })
+            const blogs = await Blog.find({ postedBy: user._id, published: true })
                 .populate('categories', 'name slug')
                 .populate('tags', 'name slug')
                 .populate('postedBy', 'id name')
                 .select(
-                    'title slug excerpt categories avatar tags postedBy createdAt'
+                    'title slug excerpt categories featureImage tags postedBy createdAt'
                 )
-
             return (ctx.body = { user, blogs })
         } catch (err) {
             ctx.throw(422, err)

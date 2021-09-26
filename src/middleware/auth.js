@@ -5,7 +5,7 @@ import Blog from '../models/Blog'
 let auth = {}
 let role
 
-async function getJwtToken(ctx, next) {
+async function getJwtToken(ctx) {
     if (!ctx.header || !ctx.header.authorization) {
         return
     }
@@ -19,7 +19,7 @@ async function getJwtToken(ctx, next) {
     }
 }
 
-async function validateJWT(ctx, next) {
+async function validateJWT(ctx) {
     const secret = process.env.JWT_SECRET
     const token = await getJwtToken(ctx)
     if (!secret || !token)
@@ -33,7 +33,8 @@ async function validateJWT(ctx, next) {
             if (!user) {
                 ctx.throw(404, 'User not found.')
             }
-            ctx.state.user = user.toAuthJSON()
+            const stateUser = user.toAuthJSON()
+            ctx.state.user = stateUser.user
             role = decoded.role
         }
     })
@@ -65,18 +66,13 @@ auth.isAdmin = async (ctx, next) => {
 
 auth.isBlogAuthor = async (ctx, next) => {
     const slug = ctx.params.slug
-    const user = await Blog.findOne({ slug: slug }).select('postedBy')
-    if (!user) {
-        ctx.throw(404, 'Only author can perform this operation.')
-    }
-    const postedById = user.postedBy._id.toString()
-    const currentUserId = ctx.state.user._id.toString()
-    const isAuthor = postedById === currentUserId
-
-    if (!isAuthor) {
+    try{
+        const blog = await Blog.findOne({ slug: slug }).select('postedBy').exec()
+        if (blog.postedBy.toString() === ctx.state.user._id.toString()) {
+            return next()
+        }
+    }catch (err){
         ctx.throw(401, 'You are not authorize to perform this action.')
-    } else {
-        return next()
     }
 }
 

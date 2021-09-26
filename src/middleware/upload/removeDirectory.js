@@ -23,10 +23,10 @@ export default async function removeDirectory(dirPath, options = {}) {
                 isDir = fileStat.isDirectory()
 
             if (isDir || (isSymlink && drillDownSymlinks)) {
-                await rmdir(filePath)
+                return await removeDirectory(filePath)
             } else {
                 if (fileName !== '.gitignore') {
-                    await unlinkAsync(filePath)
+                    return await unlinkAsync(filePath)
                 }
             }
         }

@@ -30,7 +30,7 @@ const development = process.env.NODE_ENV === 'development'
 
 // add multiple allow hosts if desired
 // example const allowHosts = ["apple.host.com", "peaches.host.com", "orange.host.com"]
-const host = development ? process.env.LOCAL_HOST : process.env.PRODUCTION_HOST
+const host = development ? process.env.LOCAL_REQUEST_HOST : process.env.PRODUCTION_REQUEST_HOST
 const allowHosts = [host]
 
 const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
@@ -61,21 +61,21 @@ require('koa-qs')(app, 'extended')
 app.use(helmet())
 
 // Here's the rate limiter - CRITICAL this should be implemented on production for a more secure API
-// app.use(
-//     ratelimit({
-//         db: new redis(),
-//         duration: 60000,
-//         errorMessage:
-//             "Hmm, you seem to be doing that a bit too much - wouldn't you say?",
-//         id: ctx => ctx.ip,
-//         headers: {
-//             remaining: 'Rate-Limit-Remaining',
-//             reset: 'Rate-Limit-Reset',
-//             total: 'Rate-Limit-Total',
-//         },
-//         max: 100,
-//     })
-// )
+app.use(
+    ratelimit({
+        db: new redis(),
+        duration: 60000,
+        errorMessage:
+            "Hmm, you seem to be doing that a bit too much - wouldn't you say?",
+        id: ctx => ctx.ip,
+        headers: {
+            remaining: 'Rate-Limit-Remaining',
+            reset: 'Rate-Limit-Reset',
+            total: 'Rate-Limit-Total',
+        },
+        max: 100,
+    })
+)
 
 // Log successful interactions
 app.use(async (ctx, next) => {
@@ -162,6 +162,7 @@ app.use(
 
 // Static Middleware
 app.use(koaStatic('./upload'))
+app.use(koaStatic('./public'))
 
 // Routes & Router allow methods
 app.use(userRouter.routes())

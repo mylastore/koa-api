@@ -1,6 +1,6 @@
 'use strict'
 
-import rmdir from '../middleware/upload/removeDirectory'
+import removeDirectory from '../middleware/upload/removeDirectory'
 
 require('dotenv').config()
 
@@ -17,11 +17,6 @@ import data from '../seed/data'
  * @category Seeding Data
  */
 class SeedData {
-    /**
-     * @param {Object[]} users users seed data
-     * @param {Object[]} listings listings seed data
-     * @param {Object[]} models Models for user, and listing
-     */
     constructor() {
         this.blogs = data.blogs
         this.users = data.users
@@ -58,7 +53,7 @@ class SeedData {
 
     async seedDb() {
         // remove everything from 'upload' directory except .gitignore file
-        await rmdir('upload', { removeContentOnly: true })
+        await removeDirectory('upload', { removeContentOnly: true })
         await this.cleanDb()
         await this.pushDataToDb()
     }

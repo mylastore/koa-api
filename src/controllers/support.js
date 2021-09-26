@@ -28,13 +28,14 @@ class SupportController {
     }
 
     async sendSupportEmail(ctx) {
-        let { name, email, message } = ctx.request.body
+        let { name, email, content } = ctx.request.body
         try {
-            if (!name && !email && !message) {
+            if (!name && !email && !content) {
                 ctx.throw(422, 'Oops!, incomplete data')
             }
-            return (ctx.body = await sendSupportEmail(ctx.request.body))
+            return ctx.body = await sendSupportEmail(ctx.request.body)
         } catch (err) {
+            console.log('errrrrrrrr ',err)
             if (err.code === 401) {
                 ctx.throw(
                     'Oops! something is not right. We are having issues sending your inquiry'

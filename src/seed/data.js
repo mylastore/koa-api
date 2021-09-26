@@ -1,6 +1,17 @@
+require('dotenv').config()
+
 const mongoose = require('mongoose')
-const shortId = require('shortid')
+const nanoid = require('nanoid')
 const { generateExcerpt } = require('../middleware/utils')
+
+const DOMAIN =
+  process.env.NODE_ENV === 'development'
+    ? process.env.APP_LOCAL_URL
+    : process.env.APP_PRODUCTION_URL
+
+console.log(DOMAIN)
+
+const defaultImage = DOMAIN + 'camera-roll.png'
 
 const user1 = mongoose.Types.ObjectId()
 const user2 = mongoose.Types.ObjectId()
@@ -72,6 +83,11 @@ module.exports = {
       metaDescription: generateExcerpt(content1, 100),
       excerpt: generateExcerpt(content1, 90),
       postedBy: user1,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       published: true,
       categories: [category4],
       tags: [tag4, tag5],
@@ -85,6 +101,11 @@ module.exports = {
       metaDescription: generateExcerpt(content2, 100),
       excerpt: generateExcerpt(content2, 100),
       postedBy: user2,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       published: true,
       categories: [category5],
       tags: [tag1, tag2],
@@ -98,6 +119,11 @@ module.exports = {
       metaDescription: generateExcerpt(content3, 100),
       excerpt: generateExcerpt(content3, 100),
       postedBy: user1,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       published: true,
       categories: [category3],
       tags: [tag1, tag2, tag5],
@@ -111,6 +137,11 @@ module.exports = {
       metaDescription: generateExcerpt(content4, 100),
       excerpt: generateExcerpt(content4, 100),
       postedBy: user2,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       categories: [category2],
       published: true,
       tags: [tag4, tag3],
@@ -124,6 +155,11 @@ module.exports = {
       metaDescription: generateExcerpt(content5, 100),
       excerpt: generateExcerpt(content5, 100),
       postedBy: user1,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       published: true,
       categories: [category1],
       tags: [tag5],
@@ -136,6 +172,11 @@ module.exports = {
       metaTile: title6,
       metaDescription: generateExcerpt(content6, 100),
       excerpt: generateExcerpt(content6, 100),
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       postedBy: user3,
       published: true,
       categories: [category3],
@@ -152,6 +193,11 @@ module.exports = {
       excerpt:
         'What should we talk about here? Consequently, Node.js represent...',
       postedBy: user1,
+      featureImage: {
+        url: defaultImage,
+        thumb: defaultImage,
+        name: 'default'
+      },
       published: false,
       categories: [category5],
       tags: [tag5],
@@ -161,7 +207,7 @@ module.exports = {
     {
       _id: category1,
       name: 'Rust',
-      slug: 'Rust',
+      slug: 'rust',
     },
     {
       _id: category2,
@@ -220,7 +266,7 @@ module.exports = {
       role: 'admin',
       about: 'about me...',
       name: 'David',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Santa Ana, CA',
       gender: 'Male',
       website: '',
@@ -236,7 +282,7 @@ module.exports = {
       role: 'user',
       name: 'Jose',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Nebraska',
       gender: 'Male',
       website: '',
@@ -247,9 +293,9 @@ module.exports = {
       avatar: 'https://picsum.photos/id/237/200',
       password: 'Password#1',
       role: 'user',
-      name: 'Maria',
+      name: 'Maria Sandobal',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Alaska',
       gender: 'Female',
       website: '',
@@ -262,7 +308,7 @@ module.exports = {
       role: 'user',
       name: 'Tina Turner',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Hacienda',
       gender: 'Female',
       website: '',
@@ -275,7 +321,7 @@ module.exports = {
       role: 'user',
       name: 'Henry Carpio',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Adromenda',
       gender: 'Male',
       website: '',
@@ -288,7 +334,7 @@ module.exports = {
       role: 'user',
       name: 'Lincoln Abraham',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Neptun',
       gender: 'Male',
       website: '',
@@ -301,7 +347,7 @@ module.exports = {
       role: 'user',
       name: 'Americo',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Jupiter',
       gender: 'Female',
       website: '',
@@ -314,7 +360,7 @@ module.exports = {
       role: 'user',
       name: 'Fernando Valenzuela',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Moon',
       gender: 'Male',
       website: '',
@@ -327,7 +373,7 @@ module.exports = {
       role: 'user',
       name: 'Jeff Bundy',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Mars',
       gender: 'Male',
       website: '',
@@ -340,7 +386,7 @@ module.exports = {
       role: 'user',
       name: 'Irlanda Croesia',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Sinaloa, MX',
       gender: 'Female',
       website: '',
@@ -353,7 +399,7 @@ module.exports = {
       role: 'user',
       name: 'Rafael Don Part',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Las Vegas, NV',
       gender: 'Male',
       website: '',
@@ -366,7 +412,7 @@ module.exports = {
       role: 'user',
       name: 'Ana Lima Peru',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Santa Cruz',
       gender: 'Female',
       website: '',
@@ -379,7 +425,7 @@ module.exports = {
       role: 'user',
       name: 'Flor Luz',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Saint Georgia',
       gender: 'Female',
       website: '',
@@ -392,7 +438,7 @@ module.exports = {
       role: 'user',
       name: 'Timmoty MaCbay',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'San Fernando',
       gender: 'Male',
       website: '',
@@ -405,7 +451,7 @@ module.exports = {
       role: 'user',
       name: 'Anastasia',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'San Isidro',
       gender: 'Female',
       website: '',
@@ -418,7 +464,7 @@ module.exports = {
       role: 'user',
       name: 'Naomi Ferguson',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'San Jose',
       gender: 'Female',
       website: '',
@@ -431,7 +477,7 @@ module.exports = {
       role: 'user',
       name: 'Tempi Arizona',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Santa Barbara',
       gender: 'Male',
       website: '',
@@ -444,7 +490,7 @@ module.exports = {
       role: 'user',
       name: 'Julieta Romeo',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Washington',
       gender: 'Female',
       website: '',
@@ -457,7 +503,7 @@ module.exports = {
       role: 'user',
       name: 'Jen Jhonson',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Santa Monica, CA',
       gender: 'Female',
       website: '',
@@ -470,7 +516,7 @@ module.exports = {
       role: 'user',
       name: 'Susan Lyn',
       about: 'about me...',
-      username: shortId.generate(),
+      username: nanoid(6),
       location: 'Seattle',
       gender: 'Female',
       website: '',

@@ -7,8 +7,8 @@ import { generateID } from '../utils'
 const BASE_DIR = 'upload/'
 const DOMAIN =
     process.env.NODE_ENV === 'development'
-        ? process.env.DEV_PATH
-        : process.env.PRODUCTION_PATH
+        ? process.env.APP_LOCAL_URL
+        : process.env.APP_PRODUCTION_URL
 
 const saveGalleryName = async ctx => {
     const { name } = ctx.request.body
