@@ -19,7 +19,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var router = new _koaRouter["default"]();
 router.get('/', /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx, next) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -36,13 +36,13 @@ router.get('/', /*#__PURE__*/function () {
     }, _callee);
   }));
 
-  return function (_x, _x2) {
+  return function (_x) {
     return _ref.apply(this, arguments);
   };
 }());
 var userController = new _user["default"]();
 router.post('/api/user/register', /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx, next) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx) {
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
@@ -58,12 +58,12 @@ router.post('/api/user/register', /*#__PURE__*/function () {
     }, _callee2);
   }));
 
-  return function (_x3, _x4) {
+  return function (_x2) {
     return _ref2.apply(this, arguments);
   };
 }());
 router.post('/api/user/login', /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx, next) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx) {
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -79,12 +79,12 @@ router.post('/api/user/login', /*#__PURE__*/function () {
     }, _callee3);
   }));
 
-  return function (_x5, _x6) {
+  return function (_x3) {
     return _ref3.apply(this, arguments);
   };
 }());
 router.post('/api/user/logout', /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(ctx, next) {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(ctx) {
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
@@ -100,12 +100,12 @@ router.post('/api/user/logout', /*#__PURE__*/function () {
     }, _callee4);
   }));
 
-  return function (_x7, _x8) {
+  return function (_x4) {
     return _ref4.apply(this, arguments);
   };
 }());
 router.post('/api/user/forgot', /*#__PURE__*/function () {
-  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(ctx, next) {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(ctx) {
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
@@ -121,12 +121,12 @@ router.post('/api/user/forgot', /*#__PURE__*/function () {
     }, _callee5);
   }));
 
-  return function (_x9, _x10) {
+  return function (_x5) {
     return _ref5.apply(this, arguments);
   };
 }());
 router.post('/api/user/reset-password', /*#__PURE__*/function () {
-  var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(ctx, next) {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(ctx) {
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -142,12 +142,12 @@ router.post('/api/user/reset-password', /*#__PURE__*/function () {
     }, _callee6);
   }));
 
-  return function (_x11, _x12) {
+  return function (_x6) {
     return _ref6.apply(this, arguments);
   };
 }());
 router.post('/api/user/update-password', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(ctx, next) {
+  var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(ctx) {
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
@@ -163,12 +163,12 @@ router.post('/api/user/update-password', _auth["default"].isUser, /*#__PURE__*/f
     }, _callee7);
   }));
 
-  return function (_x13, _x14) {
+  return function (_x7) {
     return _ref7.apply(this, arguments);
   };
 }());
 router.post('/api/user/account', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(ctx, next) {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(ctx) {
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
@@ -184,12 +184,12 @@ router.post('/api/user/account', _auth["default"].isUser, /*#__PURE__*/function 
     }, _callee8);
   }));
 
-  return function (_x15, _x16) {
+  return function (_x8) {
     return _ref8.apply(this, arguments);
   };
 }());
 router.get('/api/user/profile/:username', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(ctx, next) {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(ctx) {
     return regeneratorRuntime.wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
@@ -205,12 +205,12 @@ router.get('/api/user/profile/:username', _auth["default"].isUser, /*#__PURE__*/
     }, _callee9);
   }));
 
-  return function (_x17, _x18) {
+  return function (_x9) {
     return _ref9.apply(this, arguments);
   };
 }());
-router.get('/api/user/account/:username', /*#__PURE__*/function () {
-  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(ctx, next) {
+router.get('/api/user/public/:username', /*#__PURE__*/function () {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(ctx) {
     return regeneratorRuntime.wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
@@ -226,12 +226,12 @@ router.get('/api/user/account/:username', /*#__PURE__*/function () {
     }, _callee10);
   }));
 
-  return function (_x19, _x20) {
+  return function (_x10) {
     return _ref10.apply(this, arguments);
   };
 }());
 router.patch('/api/user/account/:username', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(ctx, next) {
+  var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(ctx) {
     return regeneratorRuntime.wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
@@ -247,7 +247,7 @@ router.patch('/api/user/account/:username', _auth["default"].isUser, /*#__PURE__
     }, _callee11);
   }));
 
-  return function (_x21, _x22) {
+  return function (_x11) {
     return _ref11.apply(this, arguments);
   };
 }());
@@ -268,12 +268,12 @@ router.post('/api/user/username/:username', _auth["default"].isUser, /*#__PURE__
     }, _callee12);
   }));
 
-  return function (_x23) {
+  return function (_x12) {
     return _ref12.apply(this, arguments);
   };
 }());
 router.post('/api/user/delete', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(ctx, next) {
+  var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(ctx) {
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
@@ -289,13 +289,13 @@ router.post('/api/user/delete', _auth["default"].isUser, /*#__PURE__*/function (
     }, _callee13);
   }));
 
-  return function (_x24, _x25) {
+  return function (_x13) {
     return _ref13.apply(this, arguments);
   };
 }()); // ADMIN USER ROUTES
 
 router.post('/api/user/settings/:username', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(ctx, next) {
+  var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(ctx) {
     return regeneratorRuntime.wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
@@ -311,12 +311,12 @@ router.post('/api/user/settings/:username', _auth["default"].isAdmin, /*#__PURE_
     }, _callee14);
   }));
 
-  return function (_x26, _x27) {
+  return function (_x14) {
     return _ref14.apply(this, arguments);
   };
 }());
 router.get('/api/admin/users/:page', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(ctx, next) {
+  var _ref15 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(ctx) {
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
@@ -332,12 +332,12 @@ router.get('/api/admin/users/:page', _auth["default"].isAdmin, /*#__PURE__*/func
     }, _callee15);
   }));
 
-  return function (_x28, _x29) {
+  return function (_x15) {
     return _ref15.apply(this, arguments);
   };
 }());
 router.get('/api/admin/user/:id', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(ctx, next) {
+  var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(ctx) {
     return regeneratorRuntime.wrap(function _callee16$(_context16) {
       while (1) {
         switch (_context16.prev = _context16.next) {
@@ -353,12 +353,12 @@ router.get('/api/admin/user/:id', _auth["default"].isAdmin, /*#__PURE__*/functio
     }, _callee16);
   }));
 
-  return function (_x30, _x31) {
+  return function (_x16) {
     return _ref16.apply(this, arguments);
   };
 }());
 router.patch('/api/admin/update-settings', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(ctx, next) {
+  var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(ctx) {
     return regeneratorRuntime.wrap(function _callee17$(_context17) {
       while (1) {
         switch (_context17.prev = _context17.next) {
@@ -374,12 +374,12 @@ router.patch('/api/admin/update-settings', _auth["default"].isAdmin, /*#__PURE__
     }, _callee17);
   }));
 
-  return function (_x32, _x33) {
+  return function (_x17) {
     return _ref17.apply(this, arguments);
   };
 }());
 router.get('/api/admin/stats', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref18 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(ctx, next) {
+  var _ref18 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(ctx) {
     return regeneratorRuntime.wrap(function _callee18$(_context18) {
       while (1) {
         switch (_context18.prev = _context18.next) {
@@ -395,12 +395,12 @@ router.get('/api/admin/stats', _auth["default"].isAdmin, /*#__PURE__*/function (
     }, _callee18);
   }));
 
-  return function (_x34, _x35) {
+  return function (_x18) {
     return _ref18.apply(this, arguments);
   };
 }());
 router.post('/api/user/account-activation', /*#__PURE__*/function () {
-  var _ref19 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(ctx, next) {
+  var _ref19 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(ctx) {
     return regeneratorRuntime.wrap(function _callee19$(_context19) {
       while (1) {
         switch (_context19.prev = _context19.next) {
@@ -416,7 +416,7 @@ router.post('/api/user/account-activation', /*#__PURE__*/function () {
     }, _callee19);
   }));
 
-  return function (_x36, _x37) {
+  return function (_x19) {
     return _ref19.apply(this, arguments);
   };
 }());
@@ -437,7 +437,7 @@ router.post('/api/user/google-login', /*#__PURE__*/function () {
     }, _callee20);
   }));
 
-  return function (_x38) {
+  return function (_x20) {
     return _ref20.apply(this, arguments);
   };
 }());

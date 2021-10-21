@@ -9,8 +9,6 @@ var _slugify = _interopRequireDefault(require("slugify"));
 
 var _Tag = _interopRequireDefault(require("../models/Tag"));
 
-var _Blog = _interopRequireDefault(require("../models/Blog"));
-
 var _mongoErrors = _interopRequireDefault(require("../middleware/mongoErrors"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -77,106 +75,23 @@ var TagController = /*#__PURE__*/function () {
       return createTag;
     }()
   }, {
-    key: "getTags",
+    key: "deleteTag",
     value: function () {
-      var _getTags = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx) {
+      var _deleteTag = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx) {
+        var slug, delTag;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.prev = 0;
-                _context2.next = 3;
-                return _Tag["default"].find({});
-
-              case 3:
-                return _context2.abrupt("return", ctx.body = _context2.sent);
-
-              case 6:
-                _context2.prev = 6;
-                _context2.t0 = _context2["catch"](0);
-                ctx["throw"](422, _context2.t0);
-
-              case 9:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, null, [[0, 6]]);
-      }));
-
-      function getTags(_x2) {
-        return _getTags.apply(this, arguments);
-      }
-
-      return getTags;
-    }()
-  }, {
-    key: "getTag",
-    value: function () {
-      var _getTag = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx) {
-        var slug, tag, blogs;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.prev = 0;
-                slug = ctx.params.slug.toLowerCase();
-                _context3.next = 4;
-                return _Tag["default"].findOne({
-                  slug: slug
-                });
-
-              case 4:
-                tag = _context3.sent;
-                _context3.next = 7;
-                return _Blog["default"].find({
-                  tags: tag
-                }).populate('categories', '_id name slug username').populate('tags', '_id name slug username').populate('postedBy', '_id name username').select('_id title slug excerpt categories tags postedBy avatar createdAt visited');
-
-              case 7:
-                blogs = _context3.sent;
-                return _context3.abrupt("return", ctx.body = {
-                  blogs: blogs,
-                  tag: tag
-                });
-
-              case 11:
-                _context3.prev = 11;
-                _context3.t0 = _context3["catch"](0);
-                ctx["throw"](422, _context3.t0);
-
-              case 14:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, null, [[0, 11]]);
-      }));
-
-      function getTag(_x3) {
-        return _getTag.apply(this, arguments);
-      }
-
-      return getTag;
-    }()
-  }, {
-    key: "deleteTag",
-    value: function () {
-      var _deleteTag = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(ctx) {
-        var slug, delTag;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _context4.prev = 0;
                 slug = ctx.params.slug;
-                _context4.next = 4;
+                _context2.next = 4;
                 return _Tag["default"].deleteOne({
                   slug: slug
                 });
 
               case 4:
-                delTag = _context4.sent;
+                delTag = _context2.sent;
 
                 if (delTag) {
                   ctx.body = {
@@ -185,23 +100,23 @@ var TagController = /*#__PURE__*/function () {
                   };
                 }
 
-                _context4.next = 11;
+                _context2.next = 11;
                 break;
 
               case 8:
-                _context4.prev = 8;
-                _context4.t0 = _context4["catch"](0);
-                ctx["throw"](422, _context4.t0);
+                _context2.prev = 8;
+                _context2.t0 = _context2["catch"](0);
+                ctx["throw"](422, _context2.t0);
 
               case 11:
               case "end":
-                return _context4.stop();
+                return _context2.stop();
             }
           }
-        }, _callee4, null, [[0, 8]]);
+        }, _callee2, null, [[0, 8]]);
       }));
 
-      function deleteTag(_x4) {
+      function deleteTag(_x2) {
         return _deleteTag.apply(this, arguments);
       }
 

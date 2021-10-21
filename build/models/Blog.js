@@ -29,6 +29,20 @@ var schema = new _mongoose["default"].Schema({
     unique: true,
     index: true
   },
+  featureImage: {
+    url: {
+      type: String
+    },
+    thumb: {
+      type: String
+    },
+    avatarID: {
+      type: String
+    },
+    name: {
+      type: String
+    }
+  },
   content: {
     type: String,
     minlength: [200, 'Content minimum number of characters is 200'],
@@ -45,13 +59,9 @@ var schema = new _mongoose["default"].Schema({
   metaDescription: {
     type: String
   },
-  avatar: {
-    type: String
-  },
-  galID: [{
+  editorImages: [{
     type: String
   }],
-  imgID: String,
   categories: [{
     type: ObjectId,
     ref: 'Category',

@@ -4,7 +4,7 @@
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import koaStatic from 'koa-static'
-import cors from 'kcors'
+import cors from '@koa/cors'
 import { logger } from './logs/logs'
 import userAgent from 'koa-useragent'
 import ratelimit from 'koa-ratelimit'

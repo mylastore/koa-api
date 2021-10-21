@@ -2,23 +2,21 @@ import mongoose from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
 const schema = new mongoose.Schema(
-
-  {
-    title: String,
-    album: String,
-    artist: String,
-    duration: Number,
-    cover: {
-      url: String,
-      alt: String
+    {
+        title: String,
+        album: String,
+        artist: String,
+        duration: Number,
+        cover: {
+            url: String,
+            alt: String,
+        },
+        guid: {
+            type: String,
+            unique: true,
+        },
     },
-    guid: {
-      type: String,
-      unique: true
-    },
-
-  },
-  { timestamps: true }
+    { timestamps: true }
 )
 
 schema.plugin(uniqueValidator, { message: '{PATH} already exist.' })

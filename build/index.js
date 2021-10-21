@@ -11,7 +11,7 @@ var _koaBody = _interopRequireDefault(require("koa-body"));
 
 var _koaStatic = _interopRequireDefault(require("koa-static"));
 
-var _kcors = _interopRequireDefault(require("kcors"));
+var _cors = _interopRequireDefault(require("@koa/cors"));
 
 var _logs = require("./logs/logs");
 
@@ -176,7 +176,7 @@ app.use( /*#__PURE__*/function () {
   return responseTime;
 }()); //For cors with options
 
-app.use((0, _kcors["default"])({
+app.use((0, _cors["default"])({
   origins: [allowSites]
 })); // For useragent(browser) detection
 

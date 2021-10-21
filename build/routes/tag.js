@@ -20,7 +20,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var controller = new _tag["default"]();
 var route = new _koaRouter["default"]();
 route.post('/api/tag', _auth["default"].isUser, /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx, next) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -36,18 +36,18 @@ route.post('/api/tag', _auth["default"].isUser, /*#__PURE__*/function () {
     }, _callee);
   }));
 
-  return function (_x, _x2) {
+  return function (_x) {
     return _ref.apply(this, arguments);
   };
 }());
-route.get('/api/tag', /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx, next) {
+route.get('/api/tag/:slug', /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx) {
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return controller.getTags(ctx);
+            return controller.getTag(ctx);
 
           case 2:
           case "end":
@@ -57,18 +57,18 @@ route.get('/api/tag', /*#__PURE__*/function () {
     }, _callee2);
   }));
 
-  return function (_x3, _x4) {
+  return function (_x2) {
     return _ref2.apply(this, arguments);
   };
 }());
-route.get('/api/tag/:slug', /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx, next) {
+route["delete"]('/api/tag/:slug', _auth["default"].isAdmin, /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx) {
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return controller.getTag(ctx);
+            return controller.deleteTag(ctx);
 
           case 2:
           case "end":
@@ -78,29 +78,8 @@ route.get('/api/tag/:slug', /*#__PURE__*/function () {
     }, _callee3);
   }));
 
-  return function (_x5, _x6) {
+  return function (_x3) {
     return _ref3.apply(this, arguments);
-  };
-}());
-route["delete"]('/api/tag/:slug', _auth["default"].isAdmin, /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(ctx, next) {
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.next = 2;
-            return controller.deleteTag(ctx);
-
-          case 2:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
-
-  return function (_x7, _x8) {
-    return _ref4.apply(this, arguments);
   };
 }());
 var _default = route;

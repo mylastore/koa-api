@@ -15,9 +15,7 @@ var _slugify = _interopRequireDefault(require("slugify"));
 
 var _stringStripHtml = _interopRequireDefault(require("string-strip-html"));
 
-var _mongoErrors = _interopRequireDefault(require("../middleware/mongoErrors"));
-
-var _utils = require("../middleware/utils");
+var _removeDirectory = _interopRequireDefault(require("../middleware/upload/removeDirectory"));
 
 var _validate = require("../middleware/validate");
 
@@ -39,48 +37,53 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var perPage = 10;
+var DOMAIN = process.env.NODE_ENV === 'development' ? process.env.APP_LOCAL_URL : process.env.APP_PRODUCTION_URL;
+var defaultAvatar = DOMAIN + process.env.DEFAULT_BLOG_IMG;
+var defaultFeatureImage = {
+  url: defaultAvatar,
+  name: 'Feature',
+  thumb: defaultAvatar
+};
+
 var BlogController = /*#__PURE__*/function () {
   function BlogController() {
     _classCallCheck(this, BlogController);
-
-    this.galID = [];
-  } //********* helper functions
-
+  }
 
   _createClass(BlogController, [{
     key: "getPublishBlogs",
-    value: function () {
+    value: //********* helper functions
+    function () {
       var _getPublishBlogs = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
-        var body, limit, skip;
+        var page;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                body = ctx.request.body;
-                limit = body.limit ? parseInt(body.limit) : 10;
-                skip = body.skip ? parseInt(body.skip) : 0;
-                _context.prev = 3;
-                _context.next = 6;
+                page = ctx.params.page || 1;
+                _context.prev = 1;
+                _context.next = 4;
                 return _Blog["default"].find({
                   published: true
                 }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').sort({
                   createdAt: -1
-                }).skip(skip).limit(limit).select('_id title avatar slug visited excerpt categories tags postedBy createdAt').exec();
+                }).skip(perPage * page - perPage).limit(perPage).select('_id title featureImage slug visited excerpt categories tags postedBy createdAt').exec();
 
-              case 6:
+              case 4:
                 return _context.abrupt("return", _context.sent);
 
-              case 9:
-                _context.prev = 9;
-                _context.t0 = _context["catch"](3);
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context["catch"](1);
                 return _context.abrupt("return", _context.t0);
 
-              case 12:
+              case 10:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[3, 9]]);
+        }, _callee, null, [[1, 7]]);
       }));
 
       function getPublishBlogs(_x) {
@@ -156,80 +159,75 @@ var BlogController = /*#__PURE__*/function () {
       }
 
       return getTags;
-    }()
+    }() //**************
+
   }, {
-    key: "getAllPublishBlogCount",
+    key: "blogImage",
     value: function () {
-      var _getAllPublishBlogCount = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+      var _blogImage = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(ctx) {
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.prev = 0;
-                _context4.next = 3;
-                return _Blog["default"].countDocuments({
-                  published: true
+                return _context4.abrupt("return", ctx.body = {
+                  avatarID: ctx.request.files.avatar.avatarID,
+                  url: ctx.request.files.avatar.url,
+                  thumb: ctx.request.files.avatar.thumb,
+                  name: ctx.request.files.avatar.name
                 });
 
-              case 3:
-                return _context4.abrupt("return", _context4.sent);
-
-              case 6:
-                _context4.prev = 6;
+              case 4:
+                _context4.prev = 4;
                 _context4.t0 = _context4["catch"](0);
-                return _context4.abrupt("return", _context4.t0);
+                ctx["throw"](422, _context4.t0);
 
-              case 9:
+              case 7:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, null, [[0, 6]]);
+        }, _callee4, null, [[0, 4]]);
       }));
 
-      function getAllPublishBlogCount() {
-        return _getAllPublishBlogCount.apply(this, arguments);
+      function blogImage(_x2) {
+        return _blogImage.apply(this, arguments);
       }
 
-      return getAllPublishBlogCount;
-    }() //**************
-
+      return blogImage;
+    }()
   }, {
     key: "blogImages",
     value: function () {
-      var _blogImages = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(ctx, next) {
-        var imgUrl, imgName, imgSize;
+      var _blogImages = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(ctx) {
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.prev = 0;
-                this.galID.push(ctx.request.files.avatar.path.galID);
-                imgUrl = ctx.request.files.avatar.path.imgUrl;
-                imgName = ctx.request.files.avatar.path.imgName;
-                imgSize = ctx.request.files.avatar.path.imgSize;
                 return _context5.abrupt("return", ctx.body = {
+                  galID: ctx.request.files.file.galID,
                   result: [{
-                    url: imgUrl,
-                    name: imgName,
-                    size: imgSize
+                    url: ctx.request.files.file.src,
+                    name: ctx.request.files.file.name,
+                    size: ctx.request.files.file.size
                   }]
                 });
 
-              case 8:
-                _context5.prev = 8;
+              case 4:
+                _context5.prev = 4;
                 _context5.t0 = _context5["catch"](0);
                 ctx["throw"](422, _context5.t0);
 
-              case 11:
+              case 7:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[0, 8]]);
+        }, _callee5, null, [[0, 4]]);
       }));
 
-      function blogImages(_x2, _x3) {
+      function blogImages(_x3) {
         return _blogImages.apply(this, arguments);
       }
 
@@ -239,39 +237,29 @@ var BlogController = /*#__PURE__*/function () {
     key: "createBlog",
     value: function () {
       var _createBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(ctx) {
-        var _ctx$request$body, title, content, published, categories, tags, slug, metaDescription, excerpt, imageURl, imgID, blog, error;
+        var _ctx$request$body, title, content, published, editorImages, selectedCategories, selectedTags, featureImage, slug, metaDescription, excerpt, blog;
 
         return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                _ctx$request$body = ctx.request.body, title = _ctx$request$body.title, content = _ctx$request$body.content, published = _ctx$request$body.published, categories = _ctx$request$body.categories, tags = _ctx$request$body.tags;
-                imageURl = 'seo-default.webp';
+                _ctx$request$body = ctx.request.body, title = _ctx$request$body.title, content = _ctx$request$body.content, published = _ctx$request$body.published, editorImages = _ctx$request$body.editorImages, selectedCategories = _ctx$request$body.selectedCategories, selectedTags = _ctx$request$body.selectedTags, featureImage = _ctx$request$body.featureImage;
 
-                if (!(0, _validate.isObjectEmpty)(ctx.request.files)) {
-                  imageURl = ctx.request.files.avatar.path.avatarUrl;
-                  imgID = ctx.request.files.avatar.path.imgID;
+                if ((0, _validate.isObjectEmpty)(featureImage) || !featureImage) {
+                  featureImage = defaultFeatureImage;
                 }
 
-                if (categories) {
-                  categories = categories.trim().split(/\s*,\s*/);
-                }
-
-                if (tags) {
-                  tags = tags.trim().split(/\s*,\s*/);
-                }
-
-                if (!categories || categories.length === 0) {
+                if (!selectedCategories || selectedCategories.length === 0) {
                   ctx["throw"](400, 'At least one category is required');
                 }
 
-                if (!tags || tags.length === 0) {
+                if (!selectedTags || selectedTags.length === 0) {
                   ctx["throw"](400, 'At least one tag is required');
                 }
 
                 if (content) {
                   metaDescription = (0, _stringStripHtml["default"])(content.substring(0, 160)).result;
-                  excerpt = (0, _stringStripHtml["default"])(content.substring(0, 200)).result;
+                  excerpt = (0, _stringStripHtml["default"])(content.substring(0, 90)).result;
                 }
 
                 if (title) {
@@ -285,45 +273,36 @@ var BlogController = /*#__PURE__*/function () {
                   slug: slug,
                   metaTitle: "".concat(title, " | ").concat(process.env.APP_NAME),
                   metaDescription: metaDescription,
-                  categories: categories,
-                  tags: tags,
+                  categories: selectedCategories,
+                  tags: selectedTags,
                   excerpt: excerpt,
-                  avatar: imageURl,
-                  imgID: imgID,
-                  galID: this.galID,
+                  featureImage: featureImage,
+                  editorImages: editorImages,
                   postedBy: ctx.state.user._id
                 });
-                _context6.next = 12;
+                _context6.prev = 7;
+                _context6.next = 10;
                 return blog.validateSync();
 
-              case 12:
-                error = _context6.sent;
-
-                if (error) {
-                  ctx["throw"](422, (0, _mongoErrors["default"])(error));
-                }
-
-                _context6.prev = 14;
-                _context6.next = 17;
+              case 10:
+                this.galID = [];
+                _context6.next = 13;
                 return blog.save();
 
-              case 17:
-                ctx.body = _context6.sent;
-                this.galID = [];
-                _context6.next = 24;
-                break;
+              case 13:
+                return _context6.abrupt("return", ctx.body = _context6.sent);
 
-              case 21:
-                _context6.prev = 21;
-                _context6.t0 = _context6["catch"](14);
-                ctx["throw"](422, (0, _mongoErrors["default"])(_context6.t0));
+              case 16:
+                _context6.prev = 16;
+                _context6.t0 = _context6["catch"](7);
+                ctx["throw"](422, _context6.t0);
 
-              case 24:
+              case 19:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[14, 21]]);
+        }, _callee6, this, [[7, 16]]);
       }));
 
       function createBlog(_x4) {
@@ -335,89 +314,86 @@ var BlogController = /*#__PURE__*/function () {
   }, {
     key: "updateBlog",
     value: function () {
-      var _updateBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(ctx, next) {
-        var data, slug, res;
+      var _updateBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(ctx) {
+        var _ctx$request$body2, published, title, content, featureImage, editorImages, selectedCategories, selectedTags, slug, blog, res;
+
         return regeneratorRuntime.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                data = ctx.request.body;
+                _ctx$request$body2 = ctx.request.body, published = _ctx$request$body2.published, title = _ctx$request$body2.title, content = _ctx$request$body2.content, featureImage = _ctx$request$body2.featureImage, editorImages = _ctx$request$body2.editorImages, selectedCategories = _ctx$request$body2.selectedCategories, selectedTags = _ctx$request$body2.selectedTags;
                 slug = ctx.params.slug;
-                data.published = ctx.request.body.published;
+                blog = {};
+                blog.categories = selectedCategories;
+                blog.tags = selectedTags;
+                blog.published = published;
 
-                if (data.title) {
-                  data.metaTitle = "".concat(data.title, " | ").concat(process.env.APP_NAME);
+                if (title) {
+                  blog.metaTitle = title;
+                  blog.slug = (0, _slugify["default"])(title).toLowerCase();
+                  blog.title = title;
                 }
 
-                if (data.content) {
-                  data.excerpt = (0, _stringStripHtml["default"])(data.content.substring(0, 200)).result;
-                  data.metaDescription = (0, _stringStripHtml["default"])(data.content.substring(0, 160)).result;
+                if (content) {
+                  blog.excerpt = (0, _stringStripHtml["default"])(content.substring(0, 90)).result;
+                  blog.metaDescription = (0, _stringStripHtml["default"])(content.substring(0, 160)).result;
+                  blog.content = content;
                 }
 
-                if (data.categories) {
-                  data.categories = data.categories.trim().split(/\s*,\s*/);
-                }
-
-                if (data.tags) {
-                  data.tags = data.tags.trim().split(/\s*,\s*/);
-                }
-
-                if (!(0, _validate.isObjectEmpty)(ctx.request.files)) {
-                  data.avatar = ctx.request.files.avatar.path.avatarUrl;
-                  data.imgID = ctx.request.files.avatar.path.imgID;
+                if (featureImage) {
+                  blog.featureImage = featureImage;
                 } // if new image push to galID array on DB
 
 
-                if (!this.galID.length) {
-                  _context7.next = 11;
+                if (!editorImages.length) {
+                  _context7.next = 12;
                   break;
                 }
 
-                _context7.next = 11;
+                _context7.next = 12;
                 return _Blog["default"].findOneAndUpdate({
                   slug: slug
                 }, {
                   $push: {
-                    galID: this.galID
+                    editorImages: editorImages
                   }
                 });
 
-              case 11:
-                _context7.prev = 11;
-                _context7.next = 14;
+              case 12:
+                _context7.prev = 12;
+                _context7.next = 15;
                 return _Blog["default"].findOneAndUpdate({
                   slug: slug
-                }, data, {
+                }, blog, {
                   "new": true,
                   runValidators: true,
                   context: 'query'
                 });
 
-              case 14:
+              case 15:
                 res = _context7.sent;
 
                 if (res) {
                   ctx.body = res;
-                  this.galID = [];
                 }
 
-                _context7.next = 21;
+                _context7.next = 22;
                 break;
 
-              case 18:
-                _context7.prev = 18;
-                _context7.t0 = _context7["catch"](11);
-                ctx["throw"](422, (0, _mongoErrors["default"])(_context7.t0));
+              case 19:
+                _context7.prev = 19;
+                _context7.t0 = _context7["catch"](12);
+                ctx["throw"](422, _context7.t0);
 
-              case 21:
+              case 22:
               case "end":
                 return _context7.stop();
             }
           }
-        }, _callee7, this, [[11, 18]]);
+        }, _callee7, null, [[12, 19]]);
       }));
 
-      function updateBlog(_x5, _x6) {
+      function updateBlog(_x5) {
         return _updateBlog.apply(this, arguments);
       }
 
@@ -426,8 +402,8 @@ var BlogController = /*#__PURE__*/function () {
   }, {
     key: "deleteImg",
     value: function () {
-      var _deleteImg = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(ctx, next) {
-        var blog, update;
+      var _deleteImg = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(ctx) {
+        var blog;
         return regeneratorRuntime.wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
@@ -440,51 +416,54 @@ var BlogController = /*#__PURE__*/function () {
 
               case 3:
                 blog = _context8.sent;
+                _context8.t0 = blog.featureImage.avatarID;
 
-                if (!blog) {
-                  _context8.next = 13;
+                if (!_context8.t0) {
+                  _context8.next = 9;
                   break;
                 }
 
-                blog.avatar = 'seo-default.webp';
                 _context8.next = 8;
-                return blog.save();
+                return (0, _removeDirectory["default"])("upload/".concat(blog.featureImage.avatarID));
 
               case 8:
-                update = _context8.sent;
+                _context8.t0 = _context8.sent;
 
-                if (!update) {
-                  _context8.next = 13;
+              case 9:
+                if (!_context8.t0) {
+                  _context8.next = 14;
                   break;
                 }
 
-                _context8.next = 12;
-                return (0, _utils.rmdir)("upload/".concat(blog.imgID));
-
-              case 12:
-                ctx.body = {
-                  status: 200,
-                  message: 'Image was updated.'
-                };
+                blog.featureImage = defaultFeatureImage;
+                _context8.next = 13;
+                return blog.save();
 
               case 13:
-                _context8.next = 18;
-                break;
+                return _context8.abrupt("return", ctx.body = _context8.sent);
 
-              case 15:
-                _context8.prev = 15;
-                _context8.t0 = _context8["catch"](0);
-                ctx["throw"](422, _context8.t0);
+              case 14:
+                blog.featureImage = defaultFeatureImage;
+                _context8.next = 17;
+                return blog.save();
 
-              case 18:
+              case 17:
+                return _context8.abrupt("return", ctx.body = _context8.sent);
+
+              case 20:
+                _context8.prev = 20;
+                _context8.t1 = _context8["catch"](0);
+                ctx["throw"](422, _context8.t1);
+
+              case 23:
               case "end":
                 return _context8.stop();
             }
           }
-        }, _callee8, null, [[0, 15]]);
+        }, _callee8, null, [[0, 20]]);
       }));
 
-      function deleteImg(_x7, _x8) {
+      function deleteImg(_x6) {
         return _deleteImg.apply(this, arguments);
       }
 
@@ -494,33 +473,52 @@ var BlogController = /*#__PURE__*/function () {
     key: "getAllUserBlogs",
     value: function () {
       var _getAllUserBlogs = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(ctx) {
+        var page, userId, blogs;
         return regeneratorRuntime.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
-                _context9.prev = 0;
-                _context9.next = 3;
+                page = ctx.params.page || 1;
+                userId = ctx.request.body.id;
+                _context9.prev = 2;
+                _context9.next = 5;
                 return _Blog["default"].find({
-                  postedBy: ctx.params.id
-                }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').select('_id title slug visited tags postedBy published createdAt');
+                  postedBy: userId
+                }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').sort({
+                  createdAt: -1
+                }).skip(perPage * page - perPage).limit(perPage).select('_id title excerpt slug featureImage visited tags postedBy published createdAt');
 
-              case 3:
-                return _context9.abrupt("return", ctx.body = _context9.sent);
-
-              case 6:
-                _context9.prev = 6;
-                _context9.t0 = _context9["catch"](0);
-                ctx["throw"](422, _context9.t0);
+              case 5:
+                blogs = _context9.sent;
+                _context9.t0 = blogs;
+                _context9.next = 9;
+                return _Blog["default"].countDocuments({
+                  postedBy: userId
+                });
 
               case 9:
+                _context9.t1 = _context9.sent;
+                _context9.t2 = perPage;
+                return _context9.abrupt("return", ctx.body = {
+                  blogs: _context9.t0,
+                  totalItems: _context9.t1,
+                  perPage: _context9.t2
+                });
+
+              case 14:
+                _context9.prev = 14;
+                _context9.t3 = _context9["catch"](2);
+                ctx["throw"](422, _context9.t3);
+
+              case 17:
               case "end":
                 return _context9.stop();
             }
           }
-        }, _callee9, null, [[0, 6]]);
+        }, _callee9, null, [[2, 14]]);
       }));
 
-      function getAllUserBlogs(_x9) {
+      function getAllUserBlogs(_x7) {
         return _getAllUserBlogs.apply(this, arguments);
       }
 
@@ -552,18 +550,20 @@ var BlogController = /*#__PURE__*/function () {
 
               case 10:
                 _context10.t2 = _context10.sent;
-                _context10.t3 = blogs.length;
-                _context10.next = 14;
-                return this.getAllPublishBlogCount();
+                _context10.next = 13;
+                return _Blog["default"].countDocuments({
+                  published: true
+                });
 
-              case 14:
-                _context10.t4 = _context10.sent;
+              case 13:
+                _context10.t3 = _context10.sent;
+                _context10.t4 = perPage;
                 return _context10.abrupt("return", ctx.body = {
                   blogs: _context10.t0,
                   categories: _context10.t1,
                   tags: _context10.t2,
-                  size: _context10.t3,
-                  total: _context10.t4
+                  totalItems: _context10.t3,
+                  perPage: _context10.t4
                 });
 
               case 18:
@@ -579,24 +579,37 @@ var BlogController = /*#__PURE__*/function () {
         }, _callee10, this, [[0, 18]]);
       }));
 
-      function getAllPublishedBlogs(_x10) {
+      function getAllPublishedBlogs(_x8) {
         return _getAllPublishedBlogs.apply(this, arguments);
       }
 
       return getAllPublishedBlogs;
     }()
   }, {
-    key: "getBlog",
+    key: "getPublicBlog",
     value: function () {
-      var _getBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(ctx) {
+      var _getPublicBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(ctx) {
         return regeneratorRuntime.wrap(function _callee11$(_context11) {
           while (1) {
             switch (_context11.prev = _context11.next) {
               case 0:
                 _context11.prev = 0;
                 _context11.next = 3;
+                return _Blog["default"].exists({
+                  slug: ctx.params.slug,
+                  published: true
+                });
+
+              case 3:
+                if (!_context11.sent) {
+                  _context11.next = 9;
+                  break;
+                }
+
+                _context11.next = 6;
                 return _Blog["default"].findOneAndUpdate({
-                  slug: ctx.params.slug
+                  slug: ctx.params.slug,
+                  published: true
                 }, {
                   $inc: {
                     visited: 1
@@ -604,25 +617,70 @@ var BlogController = /*#__PURE__*/function () {
                 }, {
                   "new": true,
                   upsert: true
-                }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').select('_id title published avatar content slug imgID visited metaTitle metaDescription categories tags postedBy createdAt');
-
-              case 3:
-                return _context11.abrupt("return", ctx.body = _context11.sent);
+                }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').select('_id title published featureImage content slug visited metaTitle metaDescription categories tags postedBy createdAt');
 
               case 6:
-                _context11.prev = 6;
+                return _context11.abrupt("return", ctx.body = _context11.sent);
+
+              case 9:
+                ctx["throw"](404, {
+                  message: 'Blog not found.'
+                });
+
+              case 10:
+                _context11.next = 15;
+                break;
+
+              case 12:
+                _context11.prev = 12;
                 _context11.t0 = _context11["catch"](0);
                 ctx["throw"](422, _context11.t0);
 
-              case 9:
+              case 15:
               case "end":
                 return _context11.stop();
             }
           }
-        }, _callee11, null, [[0, 6]]);
+        }, _callee11, null, [[0, 12]]);
       }));
 
-      function getBlog(_x11) {
+      function getPublicBlog(_x9) {
+        return _getPublicBlog.apply(this, arguments);
+      }
+
+      return getPublicBlog;
+    }()
+  }, {
+    key: "getBlog",
+    value: function () {
+      var _getBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(ctx) {
+        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+          while (1) {
+            switch (_context12.prev = _context12.next) {
+              case 0:
+                _context12.prev = 0;
+                _context12.next = 3;
+                return _Blog["default"].findOne({
+                  slug: ctx.params.slug
+                }).populate('categories', '_id name slug').populate('tags', '_id name slug').populate('postedBy', '_id name username').select('_id title published featureImage content slug visited metaTitle metaDescription categories tags postedBy createdAt');
+
+              case 3:
+                return _context12.abrupt("return", ctx.body = _context12.sent);
+
+              case 6:
+                _context12.prev = 6;
+                _context12.t0 = _context12["catch"](0);
+                ctx["throw"](422, _context12.t0);
+
+              case 9:
+              case "end":
+                return _context12.stop();
+            }
+          }
+        }, _callee12, null, [[0, 6]]);
+      }));
+
+      function getBlog(_x10) {
         return _getBlog.apply(this, arguments);
       }
 
@@ -631,117 +689,97 @@ var BlogController = /*#__PURE__*/function () {
   }, {
     key: "deleteBlog",
     value: function () {
-      var _deleteBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(ctx, next) {
-        var slug, res, _iterator, _step, filename;
+      var _deleteBlog = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(ctx) {
+        var slug, res, _iterator, _step, dir;
 
-        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+        return regeneratorRuntime.wrap(function _callee13$(_context13) {
           while (1) {
-            switch (_context12.prev = _context12.next) {
+            switch (_context13.prev = _context13.next) {
               case 0:
                 slug = ctx.params.slug;
-                _context12.prev = 1;
-                _context12.next = 4;
+                _context13.prev = 1;
+                _context13.next = 4;
                 return _Blog["default"].findOne({
                   slug: slug
                 });
 
               case 4:
-                res = _context12.sent;
+                res = _context13.sent;
 
-                if (!(res && res.imgID)) {
-                  _context12.next = 11;
+                if (!(res && res.featureImage.avatarID)) {
+                  _context13.next = 8;
                   break;
                 }
 
-                _context12.next = 8;
-                return (0, _utils.rmdir)("upload/".concat(res.imgID));
+                _context13.next = 8;
+                return (0, _removeDirectory["default"])("upload/".concat(res.featureImage.avatarID));
 
               case 8:
-                _context12.next = 10;
-                return res.remove();
-
-              case 10:
-                return _context12.abrupt("return", ctx.body = {
-                  status: 200,
-                  message: 'Success!'
-                });
-
-              case 11:
-                if (!(res && res.galID)) {
-                  _context12.next = 32;
+                if (!(res && res.editorImages.length)) {
+                  _context13.next = 26;
                   break;
                 }
 
-                _iterator = _createForOfIteratorHelper(res.galID);
-                _context12.prev = 13;
+                _iterator = _createForOfIteratorHelper(res.editorImages);
+                _context13.prev = 10;
 
                 _iterator.s();
 
-              case 15:
+              case 12:
                 if ((_step = _iterator.n()).done) {
-                  _context12.next = 21;
+                  _context13.next = 18;
                   break;
                 }
 
-                filename = _step.value;
-                _context12.next = 19;
-                return (0, _utils.rmdir)("upload/".concat(filename));
+                dir = _step.value;
+                _context13.next = 16;
+                return (0, _removeDirectory["default"])("upload/".concat(dir));
 
-              case 19:
-                _context12.next = 15;
+              case 16:
+                _context13.next = 12;
                 break;
 
-              case 21:
-                _context12.next = 26;
+              case 18:
+                _context13.next = 23;
                 break;
+
+              case 20:
+                _context13.prev = 20;
+                _context13.t0 = _context13["catch"](10);
+
+                _iterator.e(_context13.t0);
 
               case 23:
-                _context12.prev = 23;
-                _context12.t0 = _context12["catch"](13);
-
-                _iterator.e(_context12.t0);
-
-              case 26:
-                _context12.prev = 26;
+                _context13.prev = 23;
 
                 _iterator.f();
 
-                return _context12.finish(26);
+                return _context13.finish(23);
 
-              case 29:
-                _context12.next = 31;
+              case 26:
+                _context13.next = 28;
                 return res.remove();
+
+              case 28:
+                return _context13.abrupt("return", ctx.body = {
+                  status: 200,
+                  message: 'Success!'
+                });
 
               case 31:
-                return _context12.abrupt("return", ctx.body = {
-                  status: 200,
-                  message: 'Success!'
-                });
-
-              case 32:
-                _context12.next = 34;
-                return res.remove();
+                _context13.prev = 31;
+                _context13.t1 = _context13["catch"](1);
+                ctx["throw"](422, _context13.t1);
 
               case 34:
-                return _context12.abrupt("return", ctx.body = {
-                  status: 200,
-                  message: 'Success!'
-                });
-
-              case 37:
-                _context12.prev = 37;
-                _context12.t1 = _context12["catch"](1);
-                ctx["throw"](422, _context12.t1);
-
-              case 40:
               case "end":
-                return _context12.stop();
+                return _context13.stop();
             }
           }
-        }, _callee12, null, [[1, 37], [13, 23, 26, 29]]);
+        }, _callee13, null, [[1, 31], [10, 20, 23, 26]]);
       }));
 
-      function deleteBlog(_x12, _x13) {
+      function deleteBlog(_x11) {
         return _deleteBlog.apply(this, arguments);
       }
 
@@ -750,16 +788,16 @@ var BlogController = /*#__PURE__*/function () {
   }, {
     key: "getRelatedBlogs",
     value: function () {
-      var _getRelatedBlogs = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(ctx) {
-        var _ctx$request$body2, _id, categories;
+      var _getRelatedBlogs = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(ctx) {
+        var _ctx$request$body3, _id, categories;
 
-        return regeneratorRuntime.wrap(function _callee13$(_context13) {
+        return regeneratorRuntime.wrap(function _callee14$(_context14) {
           while (1) {
-            switch (_context13.prev = _context13.next) {
+            switch (_context14.prev = _context14.next) {
               case 0:
-                _ctx$request$body2 = ctx.request.body, _id = _ctx$request$body2._id, categories = _ctx$request$body2.categories;
-                _context13.prev = 1;
-                _context13.next = 4;
+                _ctx$request$body3 = ctx.request.body, _id = _ctx$request$body3._id, categories = _ctx$request$body3.categories;
+                _context14.prev = 1;
+                _context14.next = 4;
                 return _Blog["default"].find({
                   _id: {
                     $ne: _id
@@ -770,22 +808,22 @@ var BlogController = /*#__PURE__*/function () {
                 }).limit(3).populate('postedBy', '_id name username').select('title slug avatar excerpt postedBy createdAt updatedAt');
 
               case 4:
-                return _context13.abrupt("return", ctx.body = _context13.sent);
+                return _context14.abrupt("return", ctx.body = _context14.sent);
 
               case 7:
-                _context13.prev = 7;
-                _context13.t0 = _context13["catch"](1);
-                ctx["throw"](422, _context13.t0);
+                _context14.prev = 7;
+                _context14.t0 = _context14["catch"](1);
+                ctx["throw"](422, _context14.t0);
 
               case 10:
               case "end":
-                return _context13.stop();
+                return _context14.stop();
             }
           }
-        }, _callee13, null, [[1, 7]]);
+        }, _callee14, null, [[1, 7]]);
       }));
 
-      function getRelatedBlogs(_x14) {
+      function getRelatedBlogs(_x12) {
         return _getRelatedBlogs.apply(this, arguments);
       }
 
@@ -794,11 +832,11 @@ var BlogController = /*#__PURE__*/function () {
   }, {
     key: "search",
     value: function () {
-      var _search = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(ctx) {
+      var _search = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(ctx) {
         var search;
-        return regeneratorRuntime.wrap(function _callee14$(_context14) {
+        return regeneratorRuntime.wrap(function _callee15$(_context15) {
           while (1) {
-            switch (_context14.prev = _context14.next) {
+            switch (_context15.prev = _context15.next) {
               case 0:
                 search = ctx.request.query.q;
 
@@ -806,8 +844,8 @@ var BlogController = /*#__PURE__*/function () {
                   ctx["throw"](422, 'Search query is empty.');
                 }
 
-                _context14.prev = 2;
-                _context14.next = 5;
+                _context15.prev = 2;
+                _context15.next = 5;
                 return _Blog["default"].find({
                   $text: {
                     $search: search
@@ -815,26 +853,231 @@ var BlogController = /*#__PURE__*/function () {
                 }).select('title slug excerpt postedBy');
 
               case 5:
-                return _context14.abrupt("return", ctx.body = _context14.sent);
+                return _context15.abrupt("return", ctx.body = _context15.sent);
 
               case 8:
-                _context14.prev = 8;
-                _context14.t0 = _context14["catch"](2);
-                ctx["throw"](422, _context14.t0);
+                _context15.prev = 8;
+                _context15.t0 = _context15["catch"](2);
+                ctx["throw"](422, _context15.t0);
 
               case 11:
               case "end":
-                return _context14.stop();
+                return _context15.stop();
             }
           }
-        }, _callee14, null, [[2, 8]]);
+        }, _callee15, null, [[2, 8]]);
       }));
 
-      function search(_x15) {
+      function search(_x13) {
         return _search.apply(this, arguments);
       }
 
       return search;
+    }()
+  }, {
+    key: "getBlogsByCategory",
+    value: function () {
+      var _getBlogsByCategory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(ctx) {
+        var cat, page, category, blogs;
+        return regeneratorRuntime.wrap(function _callee16$(_context16) {
+          while (1) {
+            switch (_context16.prev = _context16.next) {
+              case 0:
+                cat = ctx.params.category;
+                page = ctx.params.page || 1;
+                _context16.prev = 2;
+                _context16.next = 5;
+                return _Category["default"].findOne({
+                  slug: cat
+                });
+
+              case 5:
+                category = _context16.sent;
+
+                if (!category) {
+                  _context16.next = 21;
+                  break;
+                }
+
+                _context16.next = 9;
+                return _Blog["default"].find({
+                  categories: category._id,
+                  published: true
+                }).populate('categories', '_id name username slug').populate('tags', '_id name username slug').populate('postedBy', 'username').sort({
+                  createdAt: -1
+                }).skip(perPage * page - perPage).limit(perPage).select('_id title slug excerpt visited categories tags postedBy featureImage createdAt');
+
+              case 9:
+                blogs = _context16.sent;
+                _context16.t0 = blogs;
+                _context16.t1 = category;
+                _context16.t2 = blogs.length;
+                _context16.t3 = perPage;
+                _context16.next = 16;
+                return this.getCategories();
+
+              case 16:
+                _context16.t4 = _context16.sent;
+                _context16.next = 19;
+                return this.getTags();
+
+              case 19:
+                _context16.t5 = _context16.sent;
+                return _context16.abrupt("return", ctx.body = {
+                  blogs: _context16.t0,
+                  category: _context16.t1,
+                  totalItems: _context16.t2,
+                  perPage: _context16.t3,
+                  categories: _context16.t4,
+                  tags: _context16.t5
+                });
+
+              case 21:
+                _context16.next = 26;
+                break;
+
+              case 23:
+                _context16.prev = 23;
+                _context16.t6 = _context16["catch"](2);
+                ctx["throw"](422, _context16.t6);
+
+              case 26:
+              case "end":
+                return _context16.stop();
+            }
+          }
+        }, _callee16, this, [[2, 23]]);
+      }));
+
+      function getBlogsByCategory(_x14) {
+        return _getBlogsByCategory.apply(this, arguments);
+      }
+
+      return getBlogsByCategory;
+    }()
+  }, {
+    key: "getBlogsByTag",
+    value: function () {
+      var _getBlogsByTag = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(ctx) {
+        var tag, page, tags, blogs;
+        return regeneratorRuntime.wrap(function _callee17$(_context17) {
+          while (1) {
+            switch (_context17.prev = _context17.next) {
+              case 0:
+                tag = ctx.params.tag;
+                page = ctx.params.page || 1;
+                _context17.prev = 2;
+                _context17.next = 5;
+                return _Tag["default"].findOne({
+                  slug: tag
+                });
+
+              case 5:
+                tags = _context17.sent;
+
+                if (!tags) {
+                  _context17.next = 21;
+                  break;
+                }
+
+                _context17.next = 9;
+                return _Blog["default"].find({
+                  tags: tags._id,
+                  published: true
+                }).populate('categories', '_id name username slug').populate('tags', '_id name username slug').populate('postedBy', '_id name username').sort({
+                  createdAt: -1
+                }).skip(perPage * page - perPage).limit(perPage).select('_id title slug excerpt visited categories tags postedBy featureImage createdAt');
+
+              case 9:
+                blogs = _context17.sent;
+                _context17.t0 = blogs;
+                _context17.t1 = tags;
+                _context17.t2 = blogs.length;
+                _context17.t3 = perPage;
+                _context17.next = 16;
+                return this.getCategories();
+
+              case 16:
+                _context17.t4 = _context17.sent;
+                _context17.next = 19;
+                return this.getTags();
+
+              case 19:
+                _context17.t5 = _context17.sent;
+                return _context17.abrupt("return", ctx.body = {
+                  blogs: _context17.t0,
+                  tag: _context17.t1,
+                  totalItems: _context17.t2,
+                  perPage: _context17.t3,
+                  categories: _context17.t4,
+                  tags: _context17.t5
+                });
+
+              case 21:
+                _context17.next = 26;
+                break;
+
+              case 23:
+                _context17.prev = 23;
+                _context17.t6 = _context17["catch"](2);
+                ctx["throw"](422, _context17.t6);
+
+              case 26:
+              case "end":
+                return _context17.stop();
+            }
+          }
+        }, _callee17, this, [[2, 23]]);
+      }));
+
+      function getBlogsByTag(_x15) {
+        return _getBlogsByTag.apply(this, arguments);
+      }
+
+      return getBlogsByTag;
+    }()
+  }, {
+    key: "getCategoriesAndTags",
+    value: function () {
+      var _getCategoriesAndTags = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(ctx) {
+        return regeneratorRuntime.wrap(function _callee18$(_context18) {
+          while (1) {
+            switch (_context18.prev = _context18.next) {
+              case 0:
+                _context18.prev = 0;
+                _context18.next = 3;
+                return this.getCategories();
+
+              case 3:
+                _context18.t0 = _context18.sent;
+                _context18.next = 6;
+                return this.getTags();
+
+              case 6:
+                _context18.t1 = _context18.sent;
+                return _context18.abrupt("return", ctx.body = {
+                  categories: _context18.t0,
+                  tags: _context18.t1
+                });
+
+              case 10:
+                _context18.prev = 10;
+                _context18.t2 = _context18["catch"](0);
+                ctx["throw"](422, _context18.t2);
+
+              case 13:
+              case "end":
+                return _context18.stop();
+            }
+          }
+        }, _callee18, this, [[0, 10]]);
+      }));
+
+      function getCategoriesAndTags(_x16) {
+        return _getCategoriesAndTags.apply(this, arguments);
+      }
+
+      return getCategoriesAndTags;
     }()
   }]);
 
