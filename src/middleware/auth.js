@@ -22,6 +22,8 @@ async function getJwtToken(ctx, next) {
 async function validateJWT(ctx, next) {
     const secret = process.env.JWT_SECRET
     const token = await getJwtToken(ctx)
+    console.log('secret ', secret)
+    console.log('token ', token)
 
     if (!secret || !token)
         ctx.throw(401, { message: 'Access to resource not allow' })

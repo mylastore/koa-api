@@ -187,7 +187,7 @@ module.exports = {
             gender: 'Male',
             website: '',
             settings: {
-                newUser: false
+                newUser: false,
             },
         },
         {
@@ -491,5 +491,5 @@ module.exports = {
             name: 'git',
             slug: 'git',
         },
-    ]
+    ],
 }

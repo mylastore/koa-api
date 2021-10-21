@@ -24,10 +24,12 @@ import instaRouter from './routes/instagram'
 import bookingRouter from './routes/booking'
 import galleryRouter from './routes/galleries'
 
-const development = process.env.NODE_ENV === "development"
+const development = process.env.NODE_ENV === 'development'
 
-const allowSites = development ? process.env.DEV_HOST : process.env.PRODUCTION_HOST
-const mongoDB =  development ? process.env.DB_LOCAL : process.env.DB_URI
+const allowSites = development
+    ? process.env.DEV_HOST
+    : process.env.PRODUCTION_HOST
+const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
 
 /**
  * Connection to mongo db
@@ -107,9 +109,7 @@ app.use(async function responseTime(ctx, next) {
 //For cors with options
 app.use(
     cors({
-        origins: [
-            allowSites,
-        ],
+        origins: [allowSites],
     })
 )
 
@@ -117,36 +117,36 @@ app.use(
 app.use(userAgent)
 
 app.use(async (ctx, next) => {
-  const res = require('util').inspect(ctx.userAgent.source)
-  console.log(res)
-  await next()
+    const res = require('util').inspect(ctx.userAgent.source)
+    console.log(res)
+    await next()
 })
 
 app.use(
     koaBody({
-      formLimit: '1mb',
-      multipart: true, // Allow multiple files to be uploaded
-      formidable: {
-        maxFileSize: 200 * 1024 * 1024, //200mg size limit
-        keepExtensions: true, //  Extensions to save images
-        onFileBegin: (name, file) => {
-          const fileName = file.name
-          const picReg = /\.(png|jpeg?g|svg|webp|jpg)$/i
-          if (!picReg.test(fileName)) {
-            new Error('File not supported')
-          }
+        formLimit: '1mb',
+        multipart: true, // Allow multiple files to be uploaded
+        formidable: {
+            maxFileSize: 200 * 1024 * 1024, //200mg size limit
+            keepExtensions: true, //  Extensions to save images
+            onFileBegin: (name, file) => {
+                const fileName = file.name
+                const picReg = /\.(png|jpeg?g|svg|webp|jpg)$/i
+                if (!picReg.test(fileName)) {
+                    new Error('File not supported')
+                }
+            },
+            onEnd: (name, file) => {
+                console.log('name? ', name)
+                console.log('size.size ? ', file.size)
+            },
         },
-        onEnd: (name, file) => {
-          console.log('name? ', name)
-          console.log('size.size ? ', file.size)
+        onError: err => {
+            if (err) {
+                throw err
+            }
+            new Error('Oops! something went wrong. Try again.')
         },
-      },
-      onError: err => {
-        if (err) {
-          throw err
-        }
-        new Error('Oops! something went wrong. Try again.')
-      }
     })
 )
 
