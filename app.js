@@ -2,8 +2,8 @@
 
 require('dotenv').config()
 
-const env = process.env.NODE_ENV || 'development'
-const port = process.env.PORT || 8000
+const env = process.env.NODE_ENV
+const port = process.env.PORT
 const src = env === 'production' ? './build/index' : './src/index'
 
 require('@babel/polyfill')

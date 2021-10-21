@@ -1,8 +1,8 @@
 
-# koa-api
-backend
+# koa API
+Koa API has a fleshed-out user login, signup, forgot password, email verification system using JWT, includes example seed data for users and blogs, and the following technologies listed below.
 
-## Features
+## Technologies
 - Koa 2.13.0
 - Fully written using async/await & Classes
 - Koa-Router
@@ -26,8 +26,7 @@ backend
 - Image handling with sharp(format webp, with jpg fallback)
 
 ## Installing / Getting started
-Important: use .env for all credentials
-Make sure you have redis up and running for rate limiting to work.
+###Important! rename example.env to .env and enter your credentials also make sure you have mongoDB running.
 
 ``` bash
 # install dependencies
@@ -54,10 +53,6 @@ npm run seed
 
 ## General Information
 
-Example seed data: users, blogs
-
-API has a fleshed-out user login/signup/forgot/reset authentication/email verification system using JWT.
-
 ### User Authentication Process
 
 User authentication process:
@@ -75,7 +70,7 @@ This project features an `ecosystem.json` file that is the target of the PM2 imp
 
 The `src` folder is the heart of the program.
 
-### controllers
+### Controllers
 
 We use controllers to keep our router thin. 
 
