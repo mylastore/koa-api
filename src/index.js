@@ -20,7 +20,6 @@ import categoryRouter from './routes/category'
 import tagRouter from './routes/tag'
 import blogRouter from './routes/blog'
 import authRouter from './routes/auth'
-import instaRouter from './routes/instagram'
 import bookingRouter from './routes/booking'
 import galleryRouter from './routes/galleries'
 
@@ -166,8 +165,6 @@ app.use(blogRouter.routes())
 app.use(blogRouter.allowedMethods())
 app.use(authRouter.routes())
 app.use(authRouter.allowedMethods())
-app.use(instaRouter.routes())
-app.use(instaRouter.allowedMethods())
 app.use(bookingRouter.routes())
 app.use(bookingRouter.allowedMethods())
 app.use(galleryRouter.routes())

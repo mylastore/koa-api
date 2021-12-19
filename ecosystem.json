@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "papaslive-api",
+      "name": "sveltekit-api",
       "script": "app.js",
       "instances": 1,
       "exec_mode": "cluster"

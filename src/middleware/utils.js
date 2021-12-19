@@ -3,6 +3,8 @@ import sendGridMail from '@sendgrid/mail'
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+const requestHost = process.env.NODE_ENV === 'development' ? process.env.DEV_HOST : process.env.PRODUCTION_HOST
+
 //sendgrid templates
 const bookingTemplate = process.env.SENDGRID_BOOKING
 const supportTemplate = process.env.SENDGRID_SUPPORT
@@ -10,14 +12,12 @@ const supportTemplate = process.env.SENDGRID_SUPPORT
 //sendgrid
 const appEmail = process.env.APP_EMAIL
 const appSecondEmail = process.env.APP_SECOND_EMAIL
-const appThirdEmail = process.env.APP_THIRD_EMAIL
-const appUrl = process.env.REQUEST_HOST
 const appName = process.env.APP_NAME
 
 export async function newAppointment(data) {
     const payload = {
         from: appEmail,
-        to: [appEmail, appSecondEmail, appThirdEmail],
+        to: [appEmail],
         subject: `Booking Request @ ${appName}`,
         template_id: bookingTemplate,
         dynamic_template_data: {
@@ -30,11 +30,16 @@ export async function newAppointment(data) {
             time: data.time,
         },
     }
-    return await sendGridMail.send(payload)
+    try{
+        return await sendGridMail.send(payload)
+    }catch (e){
+        return e
+    }
+
 }
 
 export async function accountActivationEmail(email, token) {
-    const link = `${appUrl}/user/activation/${token}`
+    const link = `${requestHost}/user/activation/${token}`
     const payload = {
         to: email,
         from: appEmail,
@@ -44,11 +49,16 @@ export async function accountActivationEmail(email, token) {
             <a href="${link}">ACCOUNT ACTIVATION LINK</a>
           `,
     }
-    return await sendGridMail.send(payload)
+    try {
+        return await sendGridMail.send(payload)
+    }catch (e){
+       return e
+    }
+
 }
 
 export async function sendForgotPassword(email, token) {
-    const link = `${appUrl}/user/reset/${token}`
+    const link = `${requestHost}/user/reset/${token}`
     const payload = {
         to: email,
         from: appEmail, // Change to your verified sender
@@ -58,7 +68,11 @@ export async function sendForgotPassword(email, token) {
             <a href="${link}">PASSWORD RESET LINK</a>
           `,
     }
-    return await sendGridMail.send(payload)
+    try {
+        return await sendGridMail.send(payload)
+    }catch (e){
+        return e
+    }
 }
 
 export async function sendNewUserEmail(name, email) {
@@ -72,7 +86,12 @@ export async function sendNewUserEmail(name, email) {
             <p>${email}</p>    
           `,
     }
-    return await sendGridMail.send(msg)
+    try {
+        return await sendGridMail.send(msg)
+    }catch (e){
+        return e
+    }
+
 }
 
 export async function sendSupportEmail(data) {
@@ -88,11 +107,16 @@ export async function sendSupportEmail(data) {
             email: email,
             phone: phone,
             message: message,
-            appUrl: appUrl,
+            appUrl: requestHost,
             appName: appName,
         },
     }
-    return await sendGridMail.send(payload)
+    try {
+        return await sendGridMail.send(payload)
+    }catch (e){
+        return e
+    }
+
 }
 
 export async function sendAuthorEmail(data) {
@@ -109,11 +133,16 @@ export async function sendAuthorEmail(data) {
             name: name,
             email: email,
             message: message,
-            appUrl: appUrl,
+            appUrl: requestHost,
             appName: appName,
         },
     }
-    return await sendGridMail.send(payload)
+    try{
+        return await sendGridMail.send(payload)
+    }catch (e) {
+        return e
+    }
+
 }
 
 export function gravatar(email) {
