@@ -6,7 +6,6 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - Koa 2.13.0
 - Fully written using async/await & Classes
 - Koa-Router
-- Koa-Ratelimit with Redis
 - Koa-Bodyparser
 - KCors
 - Koa-Json-Error for JSON requests/responses
@@ -19,8 +18,6 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - PM2 for running in production
 - MongoDB with Mongoose (mongoose validation)
 - Seed data for testing app
-- TODO - testing
-- log4js for logging
 - Password recover system with token
 - Multi user blog 
 - Image handling with sharp(format webp, with jpg fallback)
