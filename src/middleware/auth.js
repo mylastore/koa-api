@@ -5,7 +5,7 @@ import Blog from '../models/Blog'
 let auth = {}
 let role
 
-async function getJwtToken(ctx, next) {
+async function getJwtToken(ctx) {
     if (!ctx.header || !ctx.header.authorization) {
         return
     }
@@ -19,12 +19,9 @@ async function getJwtToken(ctx, next) {
     }
 }
 
-async function validateJWT(ctx, next) {
+async function validateJWT(ctx) {
     const secret = process.env.JWT_SECRET
     const token = await getJwtToken(ctx)
-    console.log('secret ', secret)
-    console.log('token ', token)
-
     if (!secret || !token)
         ctx.throw(401, { message: 'Access to resource not allow' })
     //jsonwebtoken.verify also checks for expiration
