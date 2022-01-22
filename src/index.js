@@ -107,7 +107,7 @@ app.use(
     formLimit: '1mb',
     multipart: true, // Allow multiple files to be uploaded
     formidable: {
-      maxFileSize: 200 * 1024 * 1024, //200mg size limit
+      maxFileSize: 200 * 1024 * 1024, //200MB size limit
       keepExtensions: true, //  Extensions to save images
       onFileBegin: (name, file) => {
         const fileName = file.name
