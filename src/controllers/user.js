@@ -205,6 +205,14 @@ class UserController {
         if (!emailValid || !data.email) {
             ctx.throw(422, 'Email format is invalid')
         }
+        const exist = await User.exists({ email: data.email })
+        // If the email does not exist, we send a generic message. No further action is taken.
+        if (!exist) {
+            ctx.throw(200, {
+                message:
+                    'If an account is found, you will receive an email with reset password instructions.',
+            })
+        }
 
         try {
             const token = jwt.sign({}, passwordResetSecrete, {

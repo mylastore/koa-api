@@ -1,7 +1,7 @@
 {
   "name": "koa-api",
   "version": "2.0.1",
-  "description": "Back end using Koa and mongoDB",
+  "description": "Back-end using Koa, mongoDB with mongoose",
   "author": "Oscar Quinteros",
   "private": false,
   "scripts": {

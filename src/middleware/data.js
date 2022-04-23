@@ -1,6 +1,6 @@
 /*
  * Library to create, read, update and delete data. Data is store as JSON stringify.
- * custom DB using node
+ * Custom DB using node. This could be good for static data.
  */
 
 // Dependencies
