@@ -63,9 +63,6 @@ const userSchema = new mongoose.Schema(
             ],
         },
         avatar: { type: String, default: 'avatar.jpg' },
-        settings: {
-            newUser: { type: Boolean, default: false },
-        },
     },
     { timestamps: true }
 )

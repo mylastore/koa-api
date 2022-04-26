@@ -6,7 +6,6 @@ import {
     gravatar,
     sendNewUserEmail,
 } from '../middleware/utils'
-import _data from '../middleware/data'
 import shortId from 'shortid'
 import mongoError from '../middleware/mongoErrors'
 import jwt from 'jsonwebtoken'
@@ -16,6 +15,7 @@ import {
     validatePassword,
     validateRequired,
 } from '../middleware/validate'
+import Settings from '../models/Settings'
 
 const passwordResetSecrete = process.env.JWT_PASSWORD_SECRET
 const userActivationSecret = process.env.JWT_ACCOUNT_ACTIVATION
@@ -26,6 +26,7 @@ const sessionExpiration = process.env.SESSION_EXPIRES
  * @category Api
  */
 class UserController {
+    // prepare email verification token
     async accountActivation(ctx) {
         const { name, email, password } = ctx.request.body
         const emailValid = validateEmail(email)
@@ -46,16 +47,17 @@ class UserController {
                 userActivationSecret,
                 { expiresIn: '60m' }
             )
-            await accountActivationEmail(email, token)
-            return (ctx.body = {
+            ctx.body = {
                 status: 200,
                 message: `An email has been sent to ${email}. Please validate to activate account.`,
-            })
+            }
+            return await accountActivationEmail(email, token)
         } catch (err) {
             ctx.throw(422, err)
         }
     }
 
+    // Complete the registration and notify admin of new user
     async register(ctx) {
         const { token } = ctx.request.body
         await jwt.verify(token, userActivationSecret, async function(
@@ -83,26 +85,17 @@ class UserController {
 
             try {
                 const result = await user.save()
-                const settingId = process.env.SETTING_ID
-                const notification = process.env.SEND_MAIL
-
                 if (result) {
-                    // Here we are checking admin settings
-                    // to see if we send the new user email notification to the admin ONLY
-                    // this data is store in the root of this directory under .data/settings directory
-                    await _data.read('settings', settingId, async function(
-                        err,
-                        checkData
-                    ) {
-                        if (
-                            !err &&
-                            checkData &&
-                            checkData.newUser === true &&
-                            notification === 'yes'
-                        ) {
-                            await sendNewUserEmail(name, email)
-                        }
-                    })
+                    // Here we check if admin wants to be notify when a new user is created
+                    // TODO refactor the notification settings checked.
+                    let newUser = false
+                    let settings = await Settings.find()
+                    for (const element of settings) {
+                        newUser = element.newUser
+                    }
+                    if (newUser) {
+                        await sendNewUserEmail(name, email)
+                    }
                     ctx.body = {
                         status: 200,
                         message: 'Account is now active. Please login.',
@@ -454,24 +447,6 @@ class UserController {
             }).select('settings'))
         } catch (err) {
             ctx.throw(422, err)
-        }
-    }
-
-    async updateSettings(ctx) {
-        try {
-            const body = ctx.request.body
-            if (!body) ctx.throw(422, 'Invalid data!')
-
-            const obj = {
-                settings: {
-                    newUser: body.newUser,
-                },
-            }
-            ctx.body = await User.findByIdAndUpdate({ _id: body.userId }, obj, {
-                new: true,
-            }).select({ settings: 1 })
-        } catch (error) {
-            ctx.throw(error)
         }
     }
 

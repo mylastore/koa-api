@@ -71,10 +71,6 @@ router.get('/api/admin/user/:id', auth.isAdmin, async ctx => {
     await userController.adminGetUser(ctx)
 })
 
-router.patch('/api/admin/update-settings', auth.isAdmin, async ctx => {
-    await userController.updateSettings(ctx)
-})
-
 router.get('/api/admin/stats', auth.isAdmin, async ctx => {
     await userController.getStats(ctx)
 })

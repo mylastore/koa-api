@@ -63,7 +63,7 @@ User authentication process:
 
 ### PM2
 
-This project features an `ecosystem.json` file that is the target of the PM2 implementation in production.
+Yep, PM2 is awesome on production.
 
 The `src` folder is the heart of the program.
 
@@ -94,10 +94,6 @@ This is where we do authentication for restricted URL
 ### index.js
 
 index.js it's the brain of the app.
-
-### Testing
-
-Jest for testing WORK IN PROGRESS - TODO 
 
 ## License
 
