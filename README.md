@@ -1,6 +1,6 @@
 
 # koa API
-Koa API has a fleshed-out user login, signup, forgot password, email verification system using JWT, includes example seed data for users and blogs, and the following technologies listed below.
+Koa API has a fleshed-out user login, signup, forgot password, email verification system using JWT, includes example seed data for users, and the following technologies listed below.
 
 ## Technologies
 - Koa 2.13.0
@@ -19,8 +19,6 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - MongoDB with Mongoose (mongoose validation)
 - Seed data for testing app
 - Password recover system with token
-- Multi user blog 
-- Image handling with sharp(format webp, with jpg fallback)
 
 ## Installing / Getting started
 ###Important! rename example.env to .env and enter your credentials also make sure you have mongoDB running.
