@@ -1,13 +1,10 @@
 import Router from 'koa-router'
-
 import SupportController from '../controllers/support'
 
 const router = new Router()
-
-//Initial controller once for all routes
 const supportController = new SupportController()
 
-router.post('/api/contact-author', async (ctx, next) => {
+router.post('/api/contact-author', async (ctx) => {
     await supportController.contactAuthor(ctx)
 })
 

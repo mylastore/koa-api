@@ -1,6 +1,5 @@
 import jsonwebtoken from 'jsonwebtoken'
 import User from '../models/User'
-import Blog from '../models/Blog'
 
 let auth = {}
 let role
@@ -60,23 +59,6 @@ auth.isAdmin = async (ctx, next) => {
         ctx.throw(401, { message: 'Not sufficient permissions' })
     } catch (error) {
         ctx.throw(401, error)
-    }
-}
-
-auth.isBlogAuthor = async (ctx, next) => {
-    const slug = ctx.params.slug
-    const user = await Blog.findOne({ slug: slug }).select('postedBy')
-    if (!user) {
-        ctx.throw(404, 'Only author can perform this operation.')
-    }
-    const postedById = user.postedBy._id.toString()
-    const currentUserId = ctx.state.user._id.toString()
-    const isAuthor = postedById === currentUserId
-
-    if (!isAuthor) {
-        ctx.throw(401, 'You are not authorize to perform this action.')
-    } else {
-        return next()
     }
 }
 

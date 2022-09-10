@@ -59,10 +59,6 @@ router.post('/api/user/delete', auth.isUser, async ctx => {
 })
 
 // ADMIN USER ROUTES
-router.post('/api/user/settings/:username', auth.isAdmin, async ctx => {
-    await userController.getAdminSettings(ctx)
-})
-
 router.get('/api/admin/users/:page', auth.isAdmin, async ctx => {
     await userController.adminGetUsers(ctx)
 })

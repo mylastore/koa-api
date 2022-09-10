@@ -13,20 +13,12 @@ import koaJsonError from 'koa-json-error'
 //Routes
 import userRouter from './routes/user'
 import supportRouter from './routes/support'
-import categoryRouter from './routes/category'
-import tagRouter from './routes/tag'
-import blogRouter from './routes/blog'
 import authRouter from './routes/auth'
-import bookingRouter from './routes/booking'
-import galleryRouter from './routes/galleries'
 import settingsRouter from './routes/settings'
 
-const development = process.env.NODE_ENV === 'development'
-
-const allowSites = development
-    ? process.env.DEV_HOST
-    : process.env.PRODUCTION_HOST
-const mongoDB = development ? process.env.DB_LOCAL : process.env.DB_URI
+const isDev = process.env.NODE_ENV === 'development'
+const allowHosts = isDev ? process.env.DEV_HOST : process.env.PRODUCTION_HOST
+const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
 /**
  * Connection to mongo db
@@ -87,9 +79,15 @@ app.use(async function responseTime(ctx, next) {
 
 //For cors with options
 app.use(
-    cors({
-        origins: [allowSites],
-    })
+  cors({
+    origin: ctx => {
+      //multiple allow host could be added here
+      if (allowHosts.indexOf(ctx.request.header.origin) !== -1) {
+        return ctx.request.header.origin
+      }
+      return allowHosts[0] // we can't return void, so let's return one of the valid domains
+    },
+  })
 )
 
 // For useragent(browser) detection
@@ -137,18 +135,8 @@ app.use(userRouter.routes())
 app.use(userRouter.allowedMethods())
 app.use(supportRouter.routes())
 app.use(supportRouter.allowedMethods())
-app.use(categoryRouter.routes())
-app.use(categoryRouter.allowedMethods())
-app.use(tagRouter.routes())
-app.use(tagRouter.allowedMethods())
-app.use(blogRouter.routes())
-app.use(blogRouter.allowedMethods())
 app.use(authRouter.routes())
 app.use(authRouter.allowedMethods())
-app.use(bookingRouter.routes())
-app.use(bookingRouter.allowedMethods())
-app.use(galleryRouter.routes())
-app.use(galleryRouter.allowedMethods())
 app.use(settingsRouter.routes())
 app.use(settingsRouter.allowedMethods())
 

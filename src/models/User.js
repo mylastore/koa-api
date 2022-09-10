@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
             ],
             immutable: true,
         },
-        role: { type: String, default: 'user', immutable: true },
+        role: { type: String, default: 'user'},
         password: {
             type: String,
             match: [

@@ -9,36 +9,11 @@ const requestHost =
         : process.env.PRODUCTION_HOST
 
 //sendgrid templates
-const bookingTemplate = process.env.SENDGRID_BOOKING
 const supportTemplate = process.env.SENDGRID_SUPPORT
 
 //sendgrid
 const appEmail = process.env.APP_EMAIL
-const appSecondEmail = process.env.APP_SECOND_EMAIL
 const appName = process.env.APP_NAME
-
-export async function newAppointment(data) {
-    const payload = {
-        from: appEmail,
-        to: [appEmail],
-        subject: `Booking Request @ ${appName}`,
-        template_id: bookingTemplate,
-        dynamic_template_data: {
-            name: data.name,
-            email: data.email,
-            address: data.address,
-            phone: data.phone,
-            additionalInfo: data.additionalInfo,
-            bookingDay: data.bookingDay,
-            time: data.time,
-        },
-    }
-    try {
-        return await sendGridMail.send(payload)
-    } catch (e) {
-        return e
-    }
-}
 
 export async function accountActivationEmail(email, token) {
     const link = `${requestHost}/user/activation/${token}`
@@ -158,31 +133,5 @@ export function parseJsonToObject(str) {
         return JSON.parse(str)
     } catch (error) {
         return {}
-    }
-}
-
-export function generateID(strLength) {
-    // Create a string of random alphanumeric characters, of a given length
-    strLength =
-        typeof strLength === 'number' && strLength > 0 ? strLength : false
-    if (strLength) {
-        // Define all the possible characters that could go into a string
-        const possibleCharacters =
-            'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-
-        // Start the final string
-        let str = ''
-        for (var i = 1; i <= strLength; i++) {
-            // Get a random characters from the possibleCharacters string
-            let randomCharacter = possibleCharacters.charAt(
-                Math.floor(Math.random() * possibleCharacters.length)
-            )
-            // Append this character to the string
-            str += randomCharacter
-        }
-        // Return the final string
-        return str
-    } else {
-        return false
     }
 }
