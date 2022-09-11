@@ -4,6 +4,9 @@
   "description": "Back-end using Koa, mongoDB with mongoose",
   "author": "Oscar Quinteros",
   "private": false,
+  "engines": {
+    "node": "16.17.0"
+  },
   "scripts": {
     "start": "NODE_ENV=development nodemon app.js --exec",
     "live": "NODE_ENV=production nodemon app.js --exec",
