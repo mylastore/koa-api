@@ -6,8 +6,6 @@ const http = require('http')
 const fs = require('fs')
 
 const isDev = (process.env.DEV_ENV === 'development')
-console.log(process.env.NODE_ENV)
-console.log(isDev)
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
 
@@ -27,8 +25,7 @@ const app = require(src).default
 //Here we're assigning the server to a variable because
 //we're going to want to manually rip down the server in testing
 
-const server = isDev ? https.createServer(options, app.callback()).listen(port) :
-  http.createServer().listen(port)
+const server = https.createServer(options, app.callback()).listen(port)
 
 console.log('https://localhost:' + port)
 console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
