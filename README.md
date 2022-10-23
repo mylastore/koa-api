@@ -9,16 +9,15 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - Koa-Bodyparser
 - KCors
 - Koa-Json-Error for JSON requests/responses
-- Koa-Useragent to get client user-agent data
 - Bcrypt
 - Sendgrid for emails
-- JWT
 - Nodemon for running in development
 - Babel
 - PM2 for running in production
 - MongoDB with Mongoose (mongoose validation)
 - Seed data for testing app
 - Password recover system with token
+- *UPDATED Authentication with JWT token and refreshToken stored in secure cookies
 
 ## Installing / Getting started
 ###Important! rename example.env to .env and enter your credentials also make sure you have mongoDB running.
@@ -33,8 +32,8 @@ npm start
 # build for production with prettier and babel
 npm run build
 
-# serve in production using the pm2 ecosystem.json file
-npm run production
+# serve in production using pm2
+npm run live
 
 # run prettier on the project
 npm run pretty
@@ -42,7 +41,7 @@ npm run pretty
 # run tests
 npm run test
 
-# Rund seed data !important will rewrite your MongoDB data and delete all uploaded images##
+# Rund seed data !important will rewrite MongoDB data ##
 npm run seed
 ```
 
@@ -55,9 +54,9 @@ User authentication process:
 - User creates an account
 - User verifies email
 - User logs in
-- The server sends and `accessToken`
-- We take the `accessToken` and decode it using `jwt-decode`. This gets us the logged-in user's information`
-- Each protected endpoint will be expecting you to attach the `accessToken` 
+- The server sets both `token` and `refreshToken` on a secure cookie
+- We take the `token` and decode it using `jwt-decode`. This gets us the logged-in user's information`
+- If the token expires and the refreshToken is still valid we issue a new token. 
 
 ### PM2
 

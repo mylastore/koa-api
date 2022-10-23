@@ -3,22 +3,18 @@ import {
   accountActivationEmail,
   sendForgotPassword,
   gravatar,
-  sendNewUserEmail,
+  sendNewUserEmail, signJWT,
 } from '../middleware/utils'
-import shortId from 'shortid'
 import mongoError from '../middleware/mongoErrors'
 import jwt from 'jsonwebtoken'
-import {OAuth2Client} from 'google-auth-library'
 import {
   validateEmail,
   validatePassword,
   validateRequired,
 } from '../middleware/validate'
-import Settings from '../models/Settings'
 
 const passwordResetSecrete = process.env.JWT_PASSWORD_SECRET
 const userActivationSecret = process.env.JWT_ACCOUNT_ACTIVATION
-const sessionExpiration = process.env.SESSION_EXPIRES
 
 /**
  * User controller - Class
@@ -70,13 +66,11 @@ class UserController {
       }
       const {name, email, password} = decoded
       const avatar = gravatar(email)
-      const username = shortId.generate()
       const obj = {
         name,
         email,
         password,
         avatar,
-        username,
         emailVerificationToken: undefined,
         emailVerified: true,
       }
@@ -85,16 +79,8 @@ class UserController {
       try {
         const result = await user.save()
         if (result) {
-          // Here we check if admin wants to be notify when a new user is created
-          // TODO refactor the notification settings checked.
-          let newUser = false
-          let settings = await Settings.find()
-          for (const element of settings) {
-            newUser = element.newUser
-          }
-          if (newUser) {
-            await sendNewUserEmail(name, email)
-          }
+          // Notify owner when a user registers
+          await sendNewUserEmail(name, email)
           ctx.body = {
             status: 200,
             message: 'Account is now active. Please login.',
@@ -108,9 +94,11 @@ class UserController {
 
   async login(ctx) {
     const {password, email} = ctx.request.body
-    const passwordValid = validatePassword(password)
-    const emailValid = validateEmail(email)
-    if (!passwordValid || !emailValid) {
+
+    validatePassword(password)
+    validateEmail(email)
+
+    if (!password || !email) {
       ctx.throw(422, 'Invalid data received')
     }
 
@@ -122,72 +110,54 @@ class UserController {
       if (!(await user.comparePassword(password))) {
         ctx.throw(422, {message: 'Password is invalid'})
       }
-      const authUser = user.toAuthJSON()
-      ctx.cookies.set('token', authUser.token, {
-        expiresIn: sessionExpiration,
-        sameSite: 'lax',
-        httpOnly: true,
-      })
-      return ctx.body = authUser
+
+      const session = {userId: user._id, valid: true, name: user.name, role: user.role}
+      //create or update the userSession
+      const res = await User.findOneAndUpdate({email}, {$set: {userSession: session}})
+      if (res) {
+        // create access token and set it in a secure cookie
+        const token = signJWT(
+          {userSession: {userId: user._id, name: user.name, role: user.role}},
+          "60s"
+        )
+        ctx.cookies.set("token", token, {
+          sameSite: 'Lax',
+          maxAge: 900000, // 15 minutes
+          httpOnly: true,
+          secure: true
+        })
+
+        const refreshToken = signJWT({userId: user._id}, "1y")
+        ctx.cookies.set("refreshToken", refreshToken, {
+          sameSite: 'Lax',
+          maxAge: 3.154e10, // 1 year
+          httpOnly: true,
+          secure: true
+        })
+        const userData = {
+          userId: user._id,
+          role: user.role,
+          name: user.name,
+        }
+        ctx.state.user = userData
+        return ctx.body = {user: userData}
+      }
+
     } catch (error) {
       ctx.throw(422, error)
     }
   }
 
-  async googleLogin(ctx) {
-    const idToken = ctx.request.body.idToken
-    const googleId = process.env.GOOGLE_ID
-    const client = new OAuth2Client(googleId)
+  async logOut(ctx) {
     try {
-      const res = await client.verifyIdToken({
-        idToken,
-        audience: googleId,
-      })
-      if (!res) {
-        ctx.throw(422, 'Google authentication failed. Try again.')
-      }
-      const {email_verified, name, email, at_hash} = res.getPayload()
-      if (!email_verified) {
-        ctx.throw(422, 'You have not verify this google email.')
-      }
-      const user = await User.findOne({email})
-      if (user) {
-        const authUser = await user.toAuthJSON()
-        await ctx.cookies.set('token', authUser.token, {
-          expiresIn: sessionExpiration,
-          sameSite: 'lax',
-          httpOnly: true,
-        })
-        return (ctx.body = authUser)
-      } else {
-        const avatar = await gravatar(email)
-        const username = await shortId.generate()
-        const password = at_hash + process.env.GOOGLE_AUTH_PASSWORD_EXT
-        const user = new User({
-          name,
-          email,
-          username,
-          password,
-          avatar,
-        })
-        const googleUser = await user.save()
-        const googleAuthUser = await googleUser.toAuthJSON()
-        ctx.cookies.set('token', googleAuthUser.token, {
-          expiresIn: sessionExpiration,
-          sameSite: 'lax',
-          httpOnly: true,
-        })
-        ctx.body = googleAuthUser
-      }
+      await User.findOneAndUpdate({_id: ctx.request.body.id}, {$set: {'userSession.valid': false}})
+      ctx.cookies.set('token', null)
+      ctx.cookies.set('refreshToken', null)
+      ctx.state.user = null
+      ctx.body = {status: 440, message: 'Session was deleted successfully'}
     } catch (err) {
       ctx.throw(422, err)
     }
-  }
-
-  async logOut(ctx) {
-    ctx.state.user = null
-    ctx.cookies.set('token', null)
-    ctx.body = {status: 200, message: 'Success!'}
   }
 
   async forgot(ctx) {
@@ -300,52 +270,24 @@ class UserController {
     }
   }
 
-  // if user is authorise sends the user data
-  async account(ctx) {
-    ctx.body = ctx.state.user
-  }
-
   async getProfile(ctx) {
     try {
       return (ctx.body = await User.findOne({
-        username: ctx.params.username,
+        _id: ctx.params.id,
       }).select(
-        'username name email about website role location gender avatar createdAt'
+        'name email about website role location gender avatar createdAt'
       ))
     } catch (err) {
       ctx.throw(422, err)
     }
   }
 
-  async updateUserName(ctx) {
-    let username = ctx.params.username
-    let exits = await User.exists({username: username})
-    if (!exits) ctx.throw(404, 'User not found')
-    try {
-      let user = await User.findOneAndUpdate(
-        {username: username},
-        username,
-        {new: true, runValidators: true, context: 'query'}
-      )
-      ctx.body = user.toAuthJSON()
-    } catch (err) {
-      ctx.throw(422, err)
-    }
-  }
-
   async updateAccount(ctx) {
-    const body = ctx.request.body
-    if (body.username) {
-      body.username.replace(/\s/g, '')
-    }
+    const data = ctx.request.body
     try {
-      let exist = await User.exists({username: body.username})
-      if (exist) {
-        ctx.throw(422, 'Username already exist, please choose another')
-      }
       let user = await User.findOneAndUpdate(
-        {username: ctx.params.username},
-        body,
+        {_id: ctx.params.id},
+        data,
         {
           new: true,
           runValidators: true,
@@ -368,10 +310,10 @@ class UserController {
       if (!deleteUser) {
         ctx.throw(422, 'Oops something went wrong, please try again.')
       }
-      ctx.state.user = null
       ctx.cookies.set('token', null)
+      ctx.cookies.set('refreshToken', null)
+      ctx.state.user = null
       ctx.body = {status: 200, message: 'Success!'}
-
     } catch (err) {
       ctx.throw(422, err)
     }
@@ -383,7 +325,7 @@ class UserController {
     const page = ctx.params.page || 1
     try {
       const users = await User.find({})
-        .select('-password')
+        .select('name gender website location createdAt avatar role')
         .skip(perPage * page - perPage)
         .limit(perPage)
       const totalItems = await User.countDocuments({})
@@ -398,16 +340,15 @@ class UserController {
   }
 
   async adminGetUser(ctx) {
+    console.log(ctx.params.id)
     try {
       return (ctx.body = await User.findById({
         _id: ctx.params.id,
       }).select({
         profile: 1,
-        email: 1,
         role: 1,
         avatar: 1,
         createdAt: 1,
-        username: 1,
         about: 1,
         name: 1,
       }))
@@ -428,8 +369,8 @@ class UserController {
   async publicProfile(ctx) {
     try {
       const user = await User.findOne({
-        username: ctx.params.username,
-      }).select('_id username name email avatar createdAt')
+        _id: ctx.params.id,
+      }).select('_id name email avatar createdAt')
 
       const blogs = await Blog.find({postedBy: user._id})
         .populate('categories', 'name slug')
