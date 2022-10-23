@@ -8,8 +8,8 @@
     "node": "16.17.0"
   },
   "scripts": {
-    "start": "NODE_ENV=development nodemon app.js --exec",
-    "live": "NODE_ENV=production nodemon app.js --exec",
+    "start": "nodemon app.js --exec",
+    "live": "nodemon app.js --exec",
     "test": "NODE_ENV=testing jest --forceExit",
     "build": "NODE_ENV=production babel src -d build && npm run pretty",
     "pretty": "prettier --write --print-width 80 --single-quote --trailing-comma es5 --tab-width 4 --no-semi 'src/**/*.js' 'tests/**/*.js'",
