@@ -4,14 +4,17 @@ require('dotenv').config()
 const https = require('https')
 const http = require('http')
 const fs = require('fs')
+let options
 
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
 
-const options = {
-  key: fs.readFileSync(process.env.LOCAL_KEY_PEM ),
-  cert: fs.readFileSync(process.env.LOCAL_CERT_PEM),
+if(isDev){
+  options = {
+    key: fs.readFileSync(process.env.LOCAL_KEY_PEM ),
+    cert: fs.readFileSync(process.env.LOCAL_CERT_PEM),
+  }
 }
 
 // setting to support to used import instead of required
