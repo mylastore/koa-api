@@ -7,4 +7,3 @@ production.env
 # misc
 .DS_Store
 *.pem
-build

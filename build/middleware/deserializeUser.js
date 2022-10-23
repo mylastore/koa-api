@@ -142,8 +142,8 @@ function _deserializeUser() {
           case 29:
             newToken = (0, _utils.signJWT)({
               userSession: session
-            }, "60s");
-            ctx.cookies.set("token", newToken, {
+            }, '60s');
+            ctx.cookies.set('token', newToken, {
               sameSite: 'Lax',
               maxAge: 900000,
               // 15 minutes

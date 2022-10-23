@@ -31,15 +31,14 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-// crate your private & public keys
-var privateKEY = _fs["default"].readFileSync(process.env.JWT_KEY_PRIVATE, 'utf8');
+var isDev = process.env.NODE_ENV === 'development'; // crate your private & public keys
 
-var publicKEY = _fs["default"].readFileSync(process.env.JWT_KEY_PUBLIC, 'utf8'); // sign jwt
-
+var privateKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_KEY_PRIVATE, 'utf8') : _fs["default"].readFileSync(process.env.JWT_KEY_PRIVATE, 'utf8');
+var publicKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_KEY_PUBLIC, 'utf8') : _fs["default"].readFileSync(process.env.JWT_KEY_PUBLIC, 'utf8'); // sign jwt
 
 function signJWT(payload, expiresIn) {
   return _jsonwebtoken["default"].sign(payload, privateKEY, {
-    algorithm: "RS256",
+    algorithm: 'RS256',
     expiresIn: expiresIn
   });
 } // verify jwt
@@ -56,7 +55,7 @@ function verifyJWT(token) {
   } catch (error) {
     return {
       payload: null,
-      expired: error.message.includes("jwt expired")
+      expired: error.message.includes('jwt expired')
     };
   }
 }

@@ -285,8 +285,8 @@ var UserController = /*#__PURE__*/function () {
                     name: user.name,
                     role: user.role
                   }
-                }, "60s");
-                ctx.cookies.set("token", token, {
+                }, '60s');
+                ctx.cookies.set('token', token, {
                   sameSite: 'Lax',
                   maxAge: 900000,
                   // 15 minutes
@@ -295,8 +295,8 @@ var UserController = /*#__PURE__*/function () {
                 });
                 refreshToken = (0, _utils.signJWT)({
                   userId: user._id
-                }, "1y");
-                ctx.cookies.set("refreshToken", refreshToken, {
+                }, '1y');
+                ctx.cookies.set('refreshToken', refreshToken, {
                   sameSite: 'Lax',
                   maxAge: 3.154e10,
                   // 1 year
