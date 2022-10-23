@@ -33,8 +33,6 @@ class SeedData {
   }
 
   async seedDb() {
-    // remove everything from 'upload' directory except .gitignore file
-    await rmdir('upload', {removeContentOnly: true})
     await this.cleanDb()
     await this.pushDataToDb()
   }
@@ -44,7 +42,6 @@ const dbUri =
   process.env.NODE_ENV === 'development'
     ? process.env.DB_LOCAL
     : process.env.DB_URI
-console.log(dbUri)
 mongoose
   .connect(dbUri, {
     useCreateIndex: true,
