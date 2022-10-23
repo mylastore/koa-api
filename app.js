@@ -9,8 +9,8 @@ const port = process.env.PORT
 const src = env === 'production' ? './build/index' : './src/index'
 
 const options = {
-  key: fs.readFileSync('/Users/oscarquinteros/localhost-key.pem'),
-  cert: fs.readFileSync('/Users/oscarquinteros/localhost.pem'),
+  key: fs.readFileSync(process.env.LOCAL_KEY_PEM),
+  cert: fs.readFileSync(process.env.LOCAL_CERT_PEM),
 }
 
 // setting to support to used import instead of required
