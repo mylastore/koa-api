@@ -39,7 +39,7 @@ module.exports = {
             name: 'David',
             location: 'Santa Ana, CA',
             gender: 'Male',
-            website: ''
+            website: '',
         },
         {
             _id: user2,
@@ -269,5 +269,5 @@ module.exports = {
             gender: 'Female',
             website: '',
         },
-    ]
+    ],
 }

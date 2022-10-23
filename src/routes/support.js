@@ -4,7 +4,7 @@ import SupportController from '../controllers/support'
 const router = new Router()
 const supportController = new SupportController()
 
-router.post('/api/contact-author', async (ctx) => {
+router.post('/api/contact-author', async ctx => {
     await supportController.contactAuthor(ctx)
 })
 
