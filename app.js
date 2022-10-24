@@ -7,10 +7,12 @@ let options
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
+const pemKey = isDev ? fs.readFileSync(process.env.LOCAL_KEY) : fs.readFileSync(process.env.LIVE_KEY)
+const pemCert = isDev ? fs.readFileSync(process.env.LOCAL_CERT) : fs.readFileSync(process.env.LIVE_CERT)
 
 options = {
-  key: isDev ? fs.readFileSync(process.env.LOCAL_KEY) : fs.readFileSync(process.env.LIVE_KEY),
-  cert: isDev ? fs.readFileSync(process.env.LOCAL_CERT) : fs.readFileSync(process.env.LIVE_CERT)
+  key: pemKey,
+  cert: pemCert
 }
 
 // setting to support to used import instead of required
