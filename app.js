@@ -7,8 +7,8 @@ let options
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
-const pemKey = isDev ? fs.readFileSync(process.env.LOCAL_KEY) : ''
-const pemCert = isDev ? fs.readFileSync(process.env.LOCAL_CERT) : ''
+const pemKey = isDev ? fs.readFileSync(process.env.LOCAL_KEY) : fs.readFileSync(process.env.LIVE_KEY)
+const pemCert = isDev ? fs.readFileSync(process.env.LOCAL_CERT) : fs.readFileSync(process.env.LIVE_CERT)
 
 options = {
   key: pemKey,
@@ -26,7 +26,9 @@ const app = require(src).default
 //Here we're assigning the server to a variable because
 //we're going to want to manually rip down the server in testing
 
-const server = https.createServer(options, app.callback()).listen(port)
+//const server = https.createServer(options, app.callback()).listen(port)
+
+const server = app.listen(port)
 
 console.log('https://localhost:' + port)
 console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
