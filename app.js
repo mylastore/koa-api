@@ -7,8 +7,8 @@ let options
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
-const pemKey = isDev ? fs.readFileSync(process.env.LOCAL_KEY) : {}
-const pemCert = isDev ? fs.readFileSync(process.env.LOCAL_CERT) : {}
+const pemKey = isDev ? fs.readFileSync(process.env.LOCAL_KEY) : ''
+const pemCert = isDev ? fs.readFileSync(process.env.LOCAL_CERT) : ''
 
 options = {
   key: pemKey,
