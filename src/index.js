@@ -48,7 +48,7 @@ app.use(async (ctx, next) => {
 // Apply error json handling and log
 const errorOptions = {
     postFormat: (e, obj) => {
-        if (isDev) {
+        if (!isDev) {
             console.log(obj)
             return obj
         }
@@ -75,7 +75,9 @@ app.use(
         credentials: true,
         origin: ctx => {
             //multiple allow host could be added here
+          console.log('origin? ', ctx.request.header.origin)
             if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
+
                 return ctx.request.header.origin
             }
             return allowHosts[0] // we can't return void, so let's return one of the valid domains
