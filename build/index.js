@@ -140,7 +140,7 @@ app.use((0, _cors["default"])({
     //multiple allow host could be added here
     console.log('origin? ', ctx.request.header.origin);
 
-    if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
+    if (allowHosts.indexOf(ctx.request.header.origin) === -1) {
       return ctx.request.header.origin;
     }
 
