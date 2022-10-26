@@ -91,7 +91,7 @@ app.use( /*#__PURE__*/function () {
 
 var errorOptions = {
   postFormat: function postFormat(e, obj) {
-    if (isDev) {
+    if (!isDev) {
       console.log(obj);
       return obj;
     }
@@ -138,6 +138,8 @@ app.use((0, _cors["default"])({
   credentials: true,
   origin: function origin(ctx) {
     //multiple allow host could be added here
+    console.log('origin? ', ctx.request.header.origin);
+
     if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
       return ctx.request.header.origin;
     }
