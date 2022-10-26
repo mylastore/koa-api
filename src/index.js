@@ -15,9 +15,7 @@ import userRouter from './routes/user'
 import supportRouter from './routes/support'
 
 const isDev = process.env.NODE_ENV === 'development'
-const allowHosts = isDev
-    ? [process.env.DEV_HOST]
-    : [process.env.PRODUCTION_HOST]
+const allowHosts = isDev ? [process.env.DEV_HOST] : [process.env.LIVE_HOST]
 const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
 mongoose
@@ -50,7 +48,7 @@ app.use(async (ctx, next) => {
 // Apply error json handling and log
 const errorOptions = {
     postFormat: (e, obj) => {
-        if (process.env.NODE_ENV !== 'production') {
+        if (isDev) {
             console.log(obj)
             return obj
         }
@@ -77,7 +75,7 @@ app.use(
         credentials: true,
         origin: ctx => {
             //multiple allow host could be added here
-            if (allowHosts.indexOf(ctx.request.header.origin) > -0) {
+            if (allowHosts.indexOf(ctx.request.header.origin) >- 1) {
                 return ctx.request.header.origin
             }
             return allowHosts[0] // we can't return void, so let's return one of the valid domains
