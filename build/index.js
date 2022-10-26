@@ -36,7 +36,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var isDev = process.env.NODE_ENV === 'development';
-var allowHosts = isDev ? [process.env.DEV_HOST] : [process.env.LIVE_HOST];
+var allowHosts = isDev ? [process.env.DEV_HOST] : [process.env.LIVE_HOST, process.env.LIVE_HOST_II];
 var mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI;
 
 _mongoose["default"].connect(mongoDB, {
