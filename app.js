@@ -1,8 +1,8 @@
 'use strict'
 require('dotenv').config()
-const https = require('https')
-const fs = require('fs')
-let options
+// const https = require('https')
+// const fs = require('fs')
+// let options
 
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
