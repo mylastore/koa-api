@@ -50,7 +50,7 @@ app.use(async (ctx, next) => {
 // Apply error json handling and log
 const errorOptions = {
     postFormat: (e, obj) => {
-        if (isDev) {
+        if (!isDev) {
             console.log(obj)
             return obj
         }
