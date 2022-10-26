@@ -36,7 +36,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var isDev = process.env.NODE_ENV === 'development';
-var allowHosts = isDev ? [process.env.DEV_HOST] : [process.env.PRODUCTION_HOST];
+var allowHosts = isDev ? [process.env.DEV_HOST] : [process.env.LIVE_HOST];
 var mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI;
 
 _mongoose["default"].connect(mongoDB, {
@@ -91,7 +91,7 @@ app.use( /*#__PURE__*/function () {
 
 var errorOptions = {
   postFormat: function postFormat(e, obj) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (isDev) {
       console.log(obj);
       return obj;
     }
@@ -138,7 +138,7 @@ app.use((0, _cors["default"])({
   credentials: true,
   origin: function origin(ctx) {
     //multiple allow host could be added here
-    if (allowHosts.indexOf(ctx.request.header.origin) > -0) {
+    if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
       return ctx.request.header.origin;
     }
 

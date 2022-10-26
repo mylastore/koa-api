@@ -75,7 +75,7 @@ app.use(
         credentials: true,
         origin: ctx => {
             //multiple allow host could be added here
-            if (allowHosts.indexOf(ctx.request.header.origin) >- 1) {
+            if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
                 return ctx.request.header.origin
             }
             return allowHosts[0] // we can't return void, so let's return one of the valid domains
