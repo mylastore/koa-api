@@ -33,8 +33,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var isDev = process.env.NODE_ENV === 'development'; // crate your private & public keys
 
-var privateKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_KEY_PRIVATE, 'utf8') : _fs["default"].readFileSync(process.env.JWT_KEY_PRIVATE, 'utf8');
-var publicKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_KEY_PUBLIC, 'utf8') : _fs["default"].readFileSync(process.env.JWT_KEY_PUBLIC, 'utf8'); // sign jwt
+var privateKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_PRIVATE, 'utf8') : _fs["default"].readFileSync(process.env.JWT_PRIVATE, 'utf8');
+var publicKEY = isDev ? _fs["default"].readFileSync(process.env.LOCAL_JWT_PUBLIC, 'utf8') : _fs["default"].readFileSync(process.env.JWT_PUBLIC, 'utf8'); // sign jwt
 
 function signJWT(payload, expiresIn) {
   return _jsonwebtoken["default"].sign(payload, privateKEY, {
@@ -62,7 +62,7 @@ function verifyJWT(token) {
 
 _mail["default"].setApiKey(process.env.SENDGRID_API_KEY);
 
-var requestHost = process.env.NODE_ENV === 'development' ? process.env.DEV_HOST : process.env.PRODUCTION_HOST; //sendgrid templates
+var requestHost = isDev ? process.env.DEV_HOST : process.env.LIVE_HOST; //sendgrid templates
 
 var supportTemplate = process.env.SENDGRID_SUPPORT; //sendgrid
 

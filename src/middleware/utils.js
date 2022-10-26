@@ -7,11 +7,11 @@ const isDev = process.env.NODE_ENV === 'development'
 
 // crate your private & public keys
 const privateKEY = isDev
-    ? fs.readFileSync(process.env.LOCAL_JWT_KEY_PRIVATE, 'utf8')
-    : fs.readFileSync(process.env.JWT_KEY_PRIVATE, 'utf8')
+    ? fs.readFileSync(process.env.LOCAL_JWT_PRIVATE, 'utf8')
+    : fs.readFileSync(process.env.JWT_PRIVATE, 'utf8')
 const publicKEY = isDev
-    ? fs.readFileSync(process.env.LOCAL_JWT_KEY_PUBLIC, 'utf8')
-    : fs.readFileSync(process.env.JWT_KEY_PUBLIC, 'utf8')
+    ? fs.readFileSync(process.env.LOCAL_JWT_PUBLIC, 'utf8')
+    : fs.readFileSync(process.env.JWT_PUBLIC, 'utf8')
 
 // sign jwt
 export function signJWT(payload, expiresIn) {
@@ -31,10 +31,7 @@ export function verifyJWT(token) {
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const requestHost =
-    process.env.NODE_ENV === 'development'
-        ? process.env.DEV_HOST
-        : process.env.PRODUCTION_HOST
+const requestHost = isDev ? process.env.DEV_HOST : process.env.LIVE_HOST
 
 //sendgrid templates
 const supportTemplate = process.env.SENDGRID_SUPPORT
