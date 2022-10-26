@@ -91,7 +91,7 @@ app.use( /*#__PURE__*/function () {
 
 var errorOptions = {
   postFormat: function postFormat(e, obj) {
-    if (isDev) {
+    if (!isDev) {
       console.log(obj);
       return obj;
     }
