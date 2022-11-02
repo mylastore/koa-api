@@ -14,6 +14,7 @@ import {
     validateRequired,
 } from '../middleware/validate'
 
+const isDev = process.env.NODE_ENV === 'development'
 const passwordResetSecrete = process.env.JWT_PASSWORD_SECRET
 const userActivationSecret = process.env.JWT_ACCOUNT_ACTIVATION
 
@@ -138,16 +139,16 @@ class UserController {
                 ctx.cookies.set('token', token, {
                     sameSite: 'Lax',
                     maxAge: 900000, // 15 minutes
-                    httpOnly: true,
-                    secure: true,
+                    httpOnly: !isDev,
+                    secure: !isDev,
                 })
 
                 const refreshToken = signJWT({ userId: user._id }, '1y')
                 ctx.cookies.set('refreshToken', refreshToken, {
                     sameSite: 'Lax',
                     maxAge: 3.154e10, // 1 year
-                    httpOnly: true,
-                    secure: true,
+                    httpOnly: !isDev,
+                    secure: !isDev,
                 })
                 const userData = {
                     userId: user._id,

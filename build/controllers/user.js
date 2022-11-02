@@ -31,6 +31,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
+var isDev = process.env.NODE_ENV === 'development';
 var passwordResetSecrete = process.env.JWT_PASSWORD_SECRET;
 var userActivationSecret = process.env.JWT_ACCOUNT_ACTIVATION;
 /**
@@ -290,8 +291,8 @@ var UserController = /*#__PURE__*/function () {
                   sameSite: 'Lax',
                   maxAge: 900000,
                   // 15 minutes
-                  httpOnly: true,
-                  secure: true
+                  httpOnly: !isDev,
+                  secure: !isDev
                 });
                 refreshToken = (0, _utils.signJWT)({
                   userId: user._id
@@ -300,8 +301,8 @@ var UserController = /*#__PURE__*/function () {
                   sameSite: 'Lax',
                   maxAge: 3.154e10,
                   // 1 year
-                  httpOnly: true,
-                  secure: true
+                  httpOnly: !isDev,
+                  secure: !isDev
                 });
                 userData = {
                   userId: user._id,
