@@ -1,5 +1,6 @@
 'use strict'
 require('dotenv').config()
+const https = require('https')
 
 const isDev = (process.env.NODE_ENV === 'development')
 const port = process.env.PORT
@@ -15,7 +16,8 @@ const app = require(src).default
 
 //Here we're assigning the server to a variable because
 //we're going to want to manually rip down the server in testing
-const server = app.listen(port)
+
+const server = isDev ? app.listen(port) : https.createServer(app.callback()).listen(port)
 
 console.log('http://localhost:' + port)
 console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
