@@ -1,8 +1,6 @@
 import { signJWT, verifyJWT } from './utils'
 import User from '../models/User'
 
-const isDev = process.env.NODE_ENV === 'development'
-
 async function getSession(id) {
     const user = await User.findOne({ _id: id })
     if (user) {
@@ -44,8 +42,8 @@ async function deserializeUser(ctx, next) {
     ctx.cookies.set('token', newToken, {
         sameSite: 'Lax',
         maxAge: 900000, // 15 minutes
-        httpOnly: !isDev,
-        secure: !isDev,
+        httpOnly: true,
+        secure: true,
     })
     const data = verifyJWT(newToken).payload
     ctx.state.user = data.userSession
