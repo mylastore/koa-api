@@ -6,16 +6,17 @@ const fs = require('fs')
 const isDev = process.env.NODE_ENV === 'development'
 const port = process.env.PORT
 const src = isDev ? './src/index' : './build/index'
+let options = {}
 
-const options = {
-  key: fs.readFileSync(process.env.LOCAL_KEY),
-  cert: fs.readFileSync(process.env.LOCAL_CERT),
-}
 
 // setting to support to used import instead of required
 require('@babel/polyfill')
 if (isDev) {
   require('@babel/register')
+  options = {
+    key: fs.readFileSync(process.env.LOCAL_KEY),
+    cert: fs.readFileSync(process.env.LOCAL_CERT),
+  }
 }
 console.log(isDev)
 const app = require(src).default
