@@ -17,7 +17,7 @@ require('@babel/polyfill')
 if (isDev) {
   require('@babel/register')
 }
-
+console.log(isDev)
 const app = require(src).default
 
 //Here we're assigning the server to a variable because
