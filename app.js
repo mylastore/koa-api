@@ -18,7 +18,7 @@ if (isDev) {
     cert: fs.readFileSync(process.env.LOCAL_CERT),
   }
 }
-console.log(isDev)
+
 const app = require(src).default
 
 //Here we're assigning the server to a variable because
@@ -26,7 +26,7 @@ const app = require(src).default
 
 const server = isDev ?
   https.createServer(options, app.callback()).listen(port) :
-  https.createServer(app.callback()).listen(port)
+  app.listen(port)
 
 console.log('https://localhost:' + port)
 console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
