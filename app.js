@@ -21,7 +21,7 @@ const app = require(src).default
 
 //Here we're assigning the server to a variable because
 //we're going to want to manually rip down the server in testing
-const server = https.createServer(options, app.callback()).listen(port)
+const server = https.createServer(app.callback()).listen(port)
 
 console.log('https://localhost:' + port)
 console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
