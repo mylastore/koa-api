@@ -43,8 +43,7 @@ var userSchema = new _mongoose["default"].Schema({
     trim: true,
     unique: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email is not valid'],
-    immutable: true
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email is not valid']
   },
   role: {
     type: String,
