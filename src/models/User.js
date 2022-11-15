@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
             match: [
                 /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
                 'Email is not valid',
-            ]
+            ],
         },
         role: { type: String, default: 'user' },
         password: {
