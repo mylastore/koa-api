@@ -41,7 +41,6 @@ var userSchema = new _mongoose["default"].Schema({
   email: {
     type: String,
     trim: true,
-    unique: true,
     lowercase: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email is not valid']
   },
