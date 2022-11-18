@@ -17,7 +17,7 @@ import supportRouter from './routes/support'
 const isDev = process.env.NODE_ENV === 'development'
 const allowHosts = isDev
     ? [process.env.DEV_HOST]
-    : [process.env.LIVE_HOST, process.env.LIVE_HOST_II]
+    : [process.env.LIVE_HOST]
 const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
 mongoose
