@@ -169,11 +169,12 @@ class UserController {
                 { $set: { 'userSession.valid': false } }
             )
             ctx.cookies.set('token', null)
+            ctx.cookies.set('user', null)
             ctx.cookies.set('refreshToken', null)
             ctx.state.user = null
             ctx.body = {
                 status: 440,
-                message: 'Session was deleted successfully',
+                message: 'Success!!',
             }
         } catch (err) {
             ctx.throw(422, err)
