@@ -1,7 +1,7 @@
 {
   "name": "koa-api",
   "version": "2.0.1",
-  "description": "Backend API with Koa, mongoDB and mongoose",
+  "description": "Authentication, with refresh token & forgot password, node API with Koa, mongoDB and mongoose",
   "author": "Oscar Quinteros",
   "private": false,
   "engines": {
@@ -24,10 +24,9 @@
     "bcrypt": "^5.0.0",
     "core-js": "^3.16.2",
     "dotenv": "^6.0.0",
-    "express-session": "^1.17.0",
     "formidable": "^1.2.2",
-    "jsonwebtoken": "^8.2.2",
-    "koa": "^2.13.0",
+    "jsonwebtoken": "^9.0.0",
+    "koa": "^2.14.1",
     "koa-body": "^4.2.0",
     "koa-helmet": "^5.2.0",
     "koa-json-error": "^3.1.2",

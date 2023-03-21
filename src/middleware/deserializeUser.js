@@ -1,6 +1,9 @@
 import { signJWT, verifyJWT } from './utils'
 import User from '../models/User'
 
+const isDev = process.env.NODE_ENV === 'development'
+const currentDomain = isDev ? process.env.LOCAL_DOMAIN : process.env.LIVE_DOMAIN
+
 async function getSession(id) {
     const user = await User.findOne({ _id: id })
     if (user) {
@@ -16,13 +19,11 @@ async function deserializeUser(ctx, next) {
     }
 
     const { payload, expired } = await verifyJWT(token)
-    // For a valid access token
     if (payload) {
         ctx.state.user = payload.userSession
         return next()
     }
 
-    // expired but valid access token
     const { payload: refresh } =
         expired && refreshToken
             ? await verifyJWT(refreshToken)
@@ -40,7 +41,7 @@ async function deserializeUser(ctx, next) {
     const newToken = signJWT({ userSession: session }, '60s')
 
     ctx.cookies.set('token', newToken, {
-        sameSite: 'Lax',
+        domain: currentDomain,
         maxAge: 900000, // 15 minutes
         httpOnly: true,
         secure: true,

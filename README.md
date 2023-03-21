@@ -1,6 +1,6 @@
 
 # koa API
-Koa API has a fleshed-out user login, signup, forgot password, email verification system using JWT, includes example seed data for users, and the following technologies listed below.
+Koa API has a fleshed-out user login, signup, forgot password, email verification, with token refresh system using JWT, includes example seed data for users, and the following technologies listed below.
 
 ## Technologies
 - Koa 2.13.0
@@ -15,7 +15,7 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - Babel
 - PM2 for running in production
 - MongoDB with Mongoose (mongoose validation)
-- Seed data for testing app
+- Seed users data for testing app
 - Password recover system with token
 - *UPDATED Authentication with JWT token and refreshToken stored in secure cookies
 
@@ -41,7 +41,7 @@ npm run pretty
 # run tests
 npm run test
 
-# Rund seed data !important will rewrite MongoDB data ##
+# Rund seed users data !important will rewrite MongoDB data ##
 npm run seed
 ```
 

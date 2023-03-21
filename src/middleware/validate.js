@@ -5,7 +5,7 @@ export function validateRequired(str) {
 // // password must be 8 characters or more, must have a capital letter and 1 special character
 export function validatePassword(val) {
     return new RegExp(
-        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(.{8,50})$'
+        '^(?=.*[a-z])(?=.*[A-Z])(.{8,50})$'
     ).test(val)
 }
 

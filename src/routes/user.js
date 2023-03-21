@@ -34,7 +34,7 @@ router.post('/api/user/update-password', auth.isUser, async ctx => {
     await userController.updatePassword(ctx)
 })
 
-router.get('/api/user/profile/:id', auth.isUser, async ctx => {
+router.post('/api/user/profile', auth.isUser, async ctx => {
     await userController.getProfile(ctx)
 })
 
@@ -42,7 +42,7 @@ router.get('/api/user/public/:id', async ctx => {
     await userController.publicProfile(ctx)
 })
 
-router.patch('/api/user/account/:id', auth.isUser, async ctx => {
+router.patch('/api/user/account', auth.isUser, async ctx => {
     await userController.updateAccount(ctx)
 })
 
