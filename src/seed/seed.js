@@ -12,43 +12,43 @@ import data from '../seed/data'
  * @category Seeding Data
  */
 class SeedData {
-    constructor() {
-        this.users = data.users
-        this.models = [User]
-    }
+  constructor() {
+    this.users = data.users
+    this.models = [User]
+  }
 
-    async cleanDb() {
-        for (let model of this.models) {
-            await model.deleteMany({}, () => {})
-        }
+  async cleanDb() {
+    for (let model of this.models) {
+      await model.deleteMany({}, () => {})
     }
+  }
 
-    async pushDataToDb() {
-        await this.users.forEach(async user => {
-            await new User(user).save(() => {})
-        })
-        console.log('Database Populated!')
-    }
+  async pushDataToDb() {
+    await this.users.forEach(async user => {
+      await new User(user).save(() => {})
+    })
+    console.log('Database Populated!')
+  }
 
-    async seedDb() {
-        await this.cleanDb()
-        await this.pushDataToDb()
-    }
+  async seedDb() {
+    await this.cleanDb()
+    await this.pushDataToDb()
+  }
 }
 
 const dbUri =
-    process.env.NODE_ENV === 'development'
-        ? process.env.DB_LOCAL
-        : process.env.DB_URI
+  process.env.NODE_ENV === 'development'
+    ? process.env.DB_LOCAL
+    : process.env.DB_URI
 mongoose
-    .connect(dbUri, {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(async () => {
-        const db = new SeedData()
-        await db.seedDb()
-        console.log('You can close the connection by pressing ctr+c')
-    })
-    .catch(err => console.log(err))
+  .connect(dbUri, {
+    useCreateIndex: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(async () => {
+    const db = new SeedData()
+    await db.seedDb()
+    console.log('You can close the connection by pressing ctr+c')
+  })
+  .catch(err => console.log(err))

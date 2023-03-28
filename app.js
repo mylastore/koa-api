@@ -7,8 +7,8 @@ const src = isDev ? './src/index' : './build/index'
 let options
 
 require('@babel/polyfill')
-const fs = require("fs");
-const https = require("https");
+const fs = require('fs')
+const https = require('https')
 
 if (isDev) {
   require('@babel/register')
@@ -19,10 +19,14 @@ if (isDev) {
 }
 
 const app = require(src).default
-const server = isDev ? https.createServer(options, app.callback()).listen(port) : app.listen(port)
+const server = isDev
+  ? https.createServer(options, app.callback()).listen(port)
+  : app.listen(port)
 
 console.log('https://localhost:' + port)
-console.log("Running in " + process.env.NODE_ENV + " v" + process.env.NPM_PACKAGE_VERSION)
+console.log(
+  'Running in ' + process.env.NODE_ENV + ' v' + process.env.NPM_PACKAGE_VERSION
+)
 
 //Exporting the actual server here for testing availability
-module.exports = {server: server}
+module.exports = { server: server }
