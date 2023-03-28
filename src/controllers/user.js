@@ -50,7 +50,7 @@ class UserController {
       }
       return await accountActivationEmail(email, token)
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -89,7 +89,7 @@ class UserController {
           }
         }
       } catch (err) {
-        ctx.throw(422, err)
+        ctx.throw(422, mongoError(err))
       }
     })
   }
@@ -168,8 +168,8 @@ class UserController {
         ctx.state.user = userData
         return ctx.body = {user: userData}
       }
-    } catch (error) {
-      ctx.throw(422, error)
+    } catch (err) {
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -190,7 +190,7 @@ class UserController {
         }
       }
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -233,7 +233,7 @@ class UserController {
           'Oops! something is not right. We are having issues sending your inquiry'
         )
       }
-      ctx.throw(err.code || 422, err)
+      ctx.throw(err.code || 422, mongoError(err))
     }
   }
 
@@ -273,7 +273,7 @@ class UserController {
             }
           }
         } catch (err) {
-          ctx.throw(422, err)
+          ctx.throw(422, mongoError(err))
         }
       }
     )
@@ -306,7 +306,7 @@ class UserController {
         'name email about website role location gender avatar createdAt _id'
       )
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -332,7 +332,7 @@ class UserController {
       }
       ctx.body = user.toAuthJSON()
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -348,7 +348,7 @@ class UserController {
         ctx.body = {status: 200, message: 'Success!'}
       }
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -368,7 +368,7 @@ class UserController {
         users: users,
       })
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -385,7 +385,7 @@ class UserController {
         name: 1,
       }))
     } catch (err) {
-      ctx.throw(err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -393,7 +393,7 @@ class UserController {
     try {
       return (ctx.body = await User.countDocuments({}))
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 
@@ -414,7 +414,7 @@ class UserController {
 
       return (ctx.body = {user, blogs})
     } catch (err) {
-      ctx.throw(422, err)
+      ctx.throw(422, mongoError(err))
     }
   }
 }
