@@ -311,8 +311,11 @@ class UserController {
   }
 
   async updateAccount(ctx) {
-    const { _id, about, website, location, gender, name } = ctx.request.body
-    const userObject = { about, website, location, gender, name }
+    const { _id, about, website, location, gender, name, email} = ctx.request.body
+    // we do not allow name or email updates.
+    if(name || email) ctx.throw(422, 'Invalid request received.')
+
+    const userObject = { about, website, location, gender }
 
     try {
       let user = await User.findOneAndUpdate(
