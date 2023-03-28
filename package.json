@@ -1,7 +1,7 @@
 {
   "name": "koa-api",
   "version": "2.0.1",
-  "description": "Authentication, with refresh token & forgot password, node API with Koa, mongoDB and mongoose",
+  "description": "Authentication, with refresh token & forgot password, Node Backend with KoaJS, mongoDB and mongoose",
   "author": "Oscar Quinteros",
   "private": false,
   "engines": {
@@ -11,8 +11,8 @@
     "start": "NODE_ENV=development nodemon app.js --exec",
     "live": "NODE_ENV=production nodemon app.js --exec",
     "test": "NODE_ENV=testing jest --forceExit",
-    "build": "NODE_ENV=production babel src -d build && npm run pretty",
-    "pretty": "prettier --write --print-width 80 --single-quote --trailing-comma es5 --tab-width 4 --no-semi 'src/**/*.js' 'tests/**/*.js'",
+    "build": "NODE_ENV=production babel src -d build && npm run format",
+    "format": "prettier --write --print-width 80 --single-quote --trailing-comma es5 --tab-width 2 --no-semi 'app.js' 'src/**/*.js' 'tests/**/*.js'",
     "clean": "npm cache clean --force",
     "seed": "node -r esm src/seed/seed.js"
   },
@@ -51,8 +51,8 @@
     "@babel/preset-env": "^7.19.0",
     "@babel/register": "^7.18.9",
     "esm": "^3.2.25",
-    "nodemon": "^2.0.4",
-    "prettier": "^1.13.4"
+    "nodemon": "^2.0.22",
+    "prettier": "^1.19.1"
   },
   "jest": {
     "testEnvironment": "node"

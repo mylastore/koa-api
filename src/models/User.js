@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: false,
             default: '',
-            maxlength: [1000, 'Location maximum length is 1000 characters'],
+            maxlength: [2000, 'About maximum length is 2000 characters'],
         },
         website: {
             type: String,
@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema(
             ],
         },
         userSession: sessionSchema,
-        avatar: { type: String, default: 'avatar.jpg' },
+        avatar: { type: String, default: process.env.DEFAULT_AVATAR },
     },
 
     { timestamps: true }
@@ -72,7 +72,7 @@ userSchema.pre('save', async function(next) {
 
 //Every user have aces to this methods
 userSchema.methods.comparePassword = async function(rawPassword) {
-    return await bcrypt.compare(rawPassword, this.password)
+  return await bcrypt.compare(rawPassword, this.password)
 }
 
 userSchema.methods.toAuthJSON = function() {

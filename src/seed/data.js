@@ -1,28 +1,8 @@
 const mongoose = require('mongoose')
-
-const user1 = mongoose.Types.ObjectId()
-const user2 = mongoose.Types.ObjectId()
-const user3 = mongoose.Types.ObjectId()
-const user4 = mongoose.Types.ObjectId()
-const user5 = mongoose.Types.ObjectId()
-const user6 = mongoose.Types.ObjectId()
-const user7 = mongoose.Types.ObjectId()
-const user8 = mongoose.Types.ObjectId()
-const user9 = mongoose.Types.ObjectId()
-const user10 = mongoose.Types.ObjectId()
-const user11 = mongoose.Types.ObjectId()
-const user12 = mongoose.Types.ObjectId()
-const user13 = mongoose.Types.ObjectId()
-const user14 = mongoose.Types.ObjectId()
-const user15 = mongoose.Types.ObjectId()
-const user16 = mongoose.Types.ObjectId()
-const user17 = mongoose.Types.ObjectId()
-const user18 = mongoose.Types.ObjectId()
-const user19 = mongoose.Types.ObjectId()
-const user20 = mongoose.Types.ObjectId()
+const defaultAvatar = process.env.DEFAULT_AVATAR
 
 /**
- * Random number generator fuction
+ * Random number generator function
  * @returns {number}
  *
  */
@@ -30,161 +10,161 @@ const user20 = mongoose.Types.ObjectId()
 module.exports = {
     users: [
         {
-            _id: user1,
-            email: 'me@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            _id: mongoose.Types.ObjectId(),
+            email: 'me1@me.com',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'admin',
             name: 'David Montoya',
         },
         {
-            _id: user2,
+            _id: mongoose.Types.ObjectId(),
             email: 'me2@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Jose Lima'
         },
         {
-            _id: user3,
+            _id: mongoose.Types.ObjectId(),
             email: 'me3@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Maria Lopez'
         },
         {
-            _id: user4,
+            _id: mongoose.Types.ObjectId(),
             email: 'me4@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Tina Turner'
         },
         {
-            _id: user5,
+            _id: mongoose.Types.ObjectId(),
             email: 'me5@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Henry Carpio'
         },
         {
-            _id: user6,
+            _id: mongoose.Types.ObjectId(),
             email: 'me6@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Lincoln Abraham'
         },
         {
-            _id: user7,
+            _id: mongoose.Types.ObjectId(),
             email: 'me7@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Americo Bespusio'
         },
         {
-            _id: user8,
+            _id: mongoose.Types.ObjectId(),
             email: 'me8@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Fernando Valenzuela'
         },
         {
-            _id: user9,
+            _id: mongoose.Types.ObjectId(),
             email: 'me9@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Jeff Bundy'
         },
         {
-            _id: user10,
+            _id: mongoose.Types.ObjectId(),
             email: 'me10@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Irlanda Croesia'
         },
         {
-            _id: user11,
+            _id: mongoose.Types.ObjectId(),
             email: 'me11@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Rafael Don Part'
         },
         {
-            _id: user12,
+            _id: mongoose.Types.ObjectId(),
             email: 'me12@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Ana Lima Peru'
         },
         {
-            _id: user13,
+            _id: mongoose.Types.ObjectId(),
             email: 'me13@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Flor Luz'
         },
         {
-            _id: user14,
+            _id: mongoose.Types.ObjectId(),
             email: 'me14@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Timmoty MaCbay'
         },
         {
-            _id: user15,
+            _id: mongoose.Types.ObjectId(),
             email: 'me15@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Anastasia Laruza'
         },
         {
-            _id: user16,
+            _id: mongoose.Types.ObjectId(),
             email: 'me16@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Naomi Ferguson'
         },
         {
-            _id: user17,
+            _id: mongoose.Types.ObjectId(),
             email: 'me17@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Tempi Arizona'
         },
         {
-            _id: user18,
+            _id: mongoose.Types.ObjectId(),
             email: 'me18@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Julieta Romeo'
         },
         {
-            _id: user19,
+            _id: mongoose.Types.ObjectId(),
             email: 'me19@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Jen Jhonson'
         },
         {
-            _id: user20,
+            _id: mongoose.Types.ObjectId(),
             email: 'me20@me.com',
-            avatar: 'https://picsum.photos/id/237/200',
+            avatar: defaultAvatar,
             password: 'Password1',
             role: 'user',
             name: 'Susan Lyn'

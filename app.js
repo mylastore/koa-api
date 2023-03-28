@@ -9,6 +9,7 @@ let options
 require('@babel/polyfill')
 const fs = require("fs");
 const https = require("https");
+
 if (isDev) {
   require('@babel/register')
   options = {

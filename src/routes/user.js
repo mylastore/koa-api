@@ -8,63 +8,63 @@ router.get('/', async ctx => {
     ctx.body = ' Hi there. '
 })
 
-const userController = new UserController()
+const controller = new UserController()
 
 router.post('/api/user/register', async ctx => {
-    await userController.register(ctx)
+    await controller.register(ctx)
 })
 
 router.post('/api/user/login', async ctx => {
-    await userController.login(ctx)
+    await controller.login(ctx)
 })
 
 router.post('/api/user/logout', async ctx => {
-    await userController.logOut(ctx)
+    await controller.logOut(ctx)
 })
 
 router.post('/api/user/forgot', async ctx => {
-    await userController.forgot(ctx)
+    await controller.forgot(ctx)
 })
 
 router.post('/api/user/reset-password', async ctx => {
-    await userController.resetPassword(ctx)
+    await controller.resetPassword(ctx)
 })
 
 router.post('/api/user/update-password', auth.isUser, async ctx => {
-    await userController.updatePassword(ctx)
+    await controller.updatePassword(ctx)
 })
 
 router.post('/api/user/profile', auth.isUser, async ctx => {
-    await userController.getProfile(ctx)
+    await controller.getProfile(ctx)
 })
 
 router.get('/api/user/public/:id', async ctx => {
-    await userController.publicProfile(ctx)
+    await controller.publicProfile(ctx)
 })
 
 router.patch('/api/user/account', auth.isUser, async ctx => {
-    await userController.updateAccount(ctx)
+    await controller.updateAccount(ctx)
 })
 
 router.post('/api/user/delete', auth.isUser, async ctx => {
-    await userController.deleteUser(ctx)
+    await controller.deleteUser(ctx)
 })
 
 // ADMIN USER ROUTES
 router.get('/api/admin/users/:page', auth.isAdmin, async ctx => {
-    await userController.adminGetUsers(ctx)
+    await controller.adminGetUsers(ctx)
 })
 
 router.get('/api/admin/user/:id', auth.isAdmin, async ctx => {
-    await userController.adminGetUser(ctx)
+    await controller.adminGetUser(ctx)
 })
 
 router.get('/api/admin/stats', auth.isAdmin, async ctx => {
-    await userController.getStats(ctx)
+    await controller.getStats(ctx)
 })
 
 router.post('/api/user/account-activation', async ctx => {
-    await userController.accountActivation(ctx)
+    await controller.accountActivation(ctx)
 })
 
 export default router

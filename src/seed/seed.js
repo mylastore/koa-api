@@ -49,6 +49,6 @@ mongoose
     .then(async () => {
         const db = new SeedData()
         await db.seedDb()
-        console.log('You can close connection now by pressing ctr+c')
+        console.log('You can close the connection by pressing ctr+c')
     })
     .catch(err => console.log(err))

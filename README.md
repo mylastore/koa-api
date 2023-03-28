@@ -1,6 +1,6 @@
 
 # koa API
-Koa API has a fleshed-out user login, signup, forgot password, email verification, with token refresh system using JWT, includes example seed data for users, and the following technologies listed below.
+KoaJS backend has a fleshed-out user login, signup, forgot password, email verification, with refresh token using JWT, includes example seed data for users.
 
 ## Technologies
 - Koa 2.13.0
@@ -12,36 +12,36 @@ Koa API has a fleshed-out user login, signup, forgot password, email verificatio
 - Bcrypt
 - Sendgrid for emails
 - Nodemon for running in development
-- Babel
-- PM2 for running in production
+- Babel 
+- Use PM2 to run on production
 - MongoDB with Mongoose (mongoose validation)
 - Seed users data for testing app
 - Password recover system with token
-- *UPDATED Authentication with JWT token and refreshToken stored in secure cookies
+- Authentication with JWT token and refreshToken stored in secure cookies
 
 ## Installing / Getting started
-###Important! rename example.env to .env and enter your credentials also make sure you have mongoDB running.
+###Important! rename example.env to .env and enter your credentials & make sure you have mongoDB running.
 
 ``` bash
-# install dependencies
-npm install
+# Install dependencies
+npm i
 
 # Development with nodemon with hot reload
 npm start
 
-# build for production with prettier and babel
+# Builds for production with prettier (formats the code), babel (ES5 conpatible) and createss a build directory.
 npm run build
 
-# serve in production using pm2
+# Run the following in production using pm2
 npm run live
 
-# run prettier on the project
-npm run pretty
+# Formats the code for readability using prettier
+npm run format
 
-# run tests
+# Runs tests TODO
 npm run test
 
-# Rund seed users data !important will rewrite MongoDB data ##
+# Run the following to seed users for testing the app. !important will rewrite MongoDB data
 npm run seed
 ```
 
@@ -52,10 +52,10 @@ npm run seed
 User authentication process:
 
 - User creates an account
-- User verifies email
+- User verifies the email
 - User logs in
 - The server sets both `token` and `refreshToken` on a secure cookie
-- We take the `token` and decode it using `jwt-decode`. This gets us the logged-in user's information`
+- We take the `token` and decode it using `jwt-decode`. This gets us the logged-in user's information
 - If the token expires and the refreshToken is still valid we issue a new token. 
 
 ### PM2

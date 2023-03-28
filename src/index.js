@@ -14,7 +14,7 @@ import deserializeUser from './middleware/deserializeUser'
 import userRouter from './routes/user'
 
 const isDev = process.env.NODE_ENV === 'development'
-const allowHosts = isDev ? [process.env.DEV_HOST, process.env.DEV_HOST_II] : [process.env.LIVE_HOST]
+const allowedDomains = isDev ? [process.env.ALLOWED_DEV_DOMAIN] : [process.env.ALLOWED_LIVE_DOMAIN]
 const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
 mongoose
@@ -73,11 +73,11 @@ app.use(
     cors({
         credentials: true,
         origin: ctx => {
-            //multiple allow host could be added here
-            if (allowHosts.indexOf(ctx.request.header.origin) > -1) {
+            // Support for multiple allowed domains
+            if (allowedDomains.indexOf(ctx.request.header.origin) > -1) {
                 return ctx.request.header.origin
             }
-            return allowHosts[0] // we can't return void, so let's return one of the valid domains
+            return allowedDomains[0] // we can't return void, so let's return one of the valid domains
         },
     })
 )
@@ -112,6 +112,7 @@ app.use(
 
 // Static Middleware
 app.use(koaStatic('./upload'))
+app.use(koaStatic('./public'))
 
 // Routes & Router allow methods
 app.use(userRouter.routes())

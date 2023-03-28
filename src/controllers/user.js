@@ -10,7 +10,6 @@ import mongoError from '../middleware/mongoErrors'
 import jwt from 'jsonwebtoken'
 import {
   validateEmail,
-  validatePassword,
   validateRequired,
 } from '../middleware/validate'
 
@@ -97,16 +96,20 @@ class UserController {
 
   async login(ctx) {
     const {password, email} = ctx.request.body
+    const isPasswordValid = validateRequired(password)
+    const isEmailValid = validateRequired(email)
+
+    if (!isPasswordValid || !isEmailValid) {
+      ctx.throw(422, 'Invalid data received.')
+    }
 
     try {
       let user = await User.findOne({email: email})
+      if (!user) {
+        ctx.throw(404, 'User not found.')
+      }
 
-      const isPassword = validateRequired(password)
-      const isEmail = validateRequired(email)
-
-      if(!isPassword || !isEmail) return ctx.throw(422, 'Email & password is required.')
-
-      if (password && !(await user.comparePassword(password))) {
+      if (!(await user.comparePassword(password))) {
         ctx.throw(422, {message: 'Invalid data received.'})
       }
 
@@ -131,11 +134,11 @@ class UserController {
               role: user.role,
             },
           },
-          '60s'
+          '30s'
         )
         ctx.cookies.set('token', token, {
           domain: currentDomain,
-          maxAge: 900000, // 15 minutes
+          maxAge: 300000, // 5 minutes
           httpOnly: true,
           secure: true,
         })
