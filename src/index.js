@@ -21,10 +21,8 @@ const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
 mongoose
   .connect(mongoDB, {
-    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
   })
   .then(() => console.log('DB: ', mongoDB))
   .catch(err => console.log(err))

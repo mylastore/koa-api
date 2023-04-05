@@ -10,11 +10,15 @@ router.get('/', async ctx => {
 
 const controller = new UserController()
 
+router.post('/api/user/account-activation', async ctx => {
+  await controller.accountActivation(ctx)
+})
+
 router.post('/api/user/register', async ctx => {
   await controller.register(ctx)
 })
 
-router.post('/api/user/login', async ctx => {
+router.post('/api/user/login', async (ctx) => {
   await controller.login(ctx)
 })
 
@@ -61,10 +65,6 @@ router.get('/api/admin/user/:id', auth.isAdmin, async ctx => {
 
 router.get('/api/admin/stats', auth.isAdmin, async ctx => {
   await controller.getStats(ctx)
-})
-
-router.post('/api/user/account-activation', async ctx => {
-  await controller.accountActivation(ctx)
 })
 
 export default router

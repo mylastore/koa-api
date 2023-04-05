@@ -6,9 +6,9 @@ import {
   sendNewUserEmail,
   signJWT,
 } from '../middleware/utils'
-import mongoError from '../middleware/mongoErrors'
 import jwt from 'jsonwebtoken'
-import { validateEmail, validateRequired } from '../middleware/validate'
+import {validateRequired} from '../middleware/validate'
+import mongoErrorFormat from "../middleware/mongoErrorFormat";
 
 const isDev = process.env.NODE_ENV === 'development'
 const currentDomain = isDev ? process.env.LOCAL_DOMAIN : process.env.LIVE_DOMAIN
@@ -22,7 +22,7 @@ const userActivationSecret = process.env.JWT_ACCOUNT_ACTIVATION
 class UserController {
   // prepare email verification token
   async accountActivation(ctx) {
-    const { name, email, password } = ctx.request.body
+    const {name, email, password, passwordConfirmation} = ctx.request.body
     const emailValid = validateRequired(email)
     const passwordValid = validateRequired(password)
     const nameValid = validateRequired(name)
@@ -30,16 +30,28 @@ class UserController {
     if (!emailValid || !passwordValid || !nameValid) {
       ctx.throw(422, 'Invalid data received')
     }
+    if (password !== passwordConfirmation) {
+      ctx.throw(422, 'Password & Confirm Password does not match.')
+    }
 
     try {
-      const user = await User.exists({ email })
+      const user = await User.exists({email})
       if (user) {
         ctx.throw(422, 'An active account already exist.')
       }
+      // don't validate "about"
+      const unset = {$unset: {about: 1, location: 1}};
+      const userData = new User({
+        email,
+        name,
+        password
+      }, unset)
+      // validate signup data
+      await userData.validate()
       const token = await jwt.sign(
-        { name, email, password },
+        {name, email, password},
         userActivationSecret,
-        { expiresIn: '60m' }
+        {expiresIn: '60m'}
       )
       ctx.body = {
         status: 200,
@@ -47,20 +59,20 @@ class UserController {
       }
       return await accountActivationEmail(email, token)
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   // Complete the registration and notify admin of new user
   async register(ctx) {
-    const { token } = ctx.request.body
-    await jwt.verify(token, userActivationSecret, async function(err, decoded) {
+    const {token} = ctx.request.body
+    await jwt.verify(token, userActivationSecret, async function (err, decoded) {
       if (err) {
         ctx.throw(401, {
           message: 'Link is expired. Please signup again.',
         })
       }
-      const { name, email, password } = decoded
+      const {name, email, password} = decoded
       const avatar = gravatar(email)
       const obj = {
         name,
@@ -83,28 +95,36 @@ class UserController {
           }
         }
       } catch (err) {
-        ctx.throw(422, mongoError(err))
+        ctx.throw(422, mongoErrorFormat(err))
       }
     })
   }
 
   async login(ctx) {
-    const { password, email } = ctx.request.body
+    const {password, email} = ctx.request.body
     const isPasswordValid = validateRequired(password)
     const isEmailValid = validateRequired(email)
 
     if (!isPasswordValid || !isEmailValid) {
       ctx.throw(422, 'Invalid data received.')
     }
+    const userData = {
+      password,
+      email
+    }
 
     try {
-      let user = await User.findOne({ email: email })
+      // validate email & password
+      await User.validate(userData)
+
+      // we need the user data
+      let user = await User.findOne({email: email})
       if (!user) {
         ctx.throw(404, 'User not found.')
       }
 
       if (!(await user.comparePassword(password))) {
-        ctx.throw(422, { message: 'Invalid data received.' })
+        ctx.throw(422, {message: 'Invalid data received.'})
       }
 
       const session = {
@@ -115,8 +135,8 @@ class UserController {
       }
       //create or update the userSession
       const res = await User.findOneAndUpdate(
-        { email },
-        { $set: { userSession: session } }
+        {email},
+        {$set: {userSession: session}}
       )
       if (res) {
         // create access token and set it in a secure cookie
@@ -137,7 +157,7 @@ class UserController {
           secure: true,
         })
 
-        const refreshToken = signJWT({ userId: user._id }, '1y')
+        const refreshToken = signJWT({userId: user._id}, '1y')
         ctx.cookies.set('refreshToken', refreshToken, {
           domain: currentDomain,
           maxAge: 3.154e10, // 1 year
@@ -160,22 +180,22 @@ class UserController {
         })
 
         ctx.state.user = userData
-        return (ctx.body = { user: userData })
+        return (ctx.body = {user: userData})
       }
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   async logOut(ctx) {
     try {
       const res = await User.findOneAndUpdate(
-        { _id: ctx.request.body.id },
-        { $set: { 'userSession.valid': false } }
+        {_id: ctx.request.body.id},
+        {$set: {'userSession.valid': false}}
       )
       if (res) {
-        ctx.cookies.set('token', null, { domain: currentDomain, maxAge: 0 })
-        ctx.cookies.set('user', null, { domain: currentDomain, maxAge: 0 })
+        ctx.cookies.set('token', null, {domain: currentDomain, maxAge: 0})
+        ctx.cookies.set('user', null, {domain: currentDomain, maxAge: 0})
         ctx.cookies.set('refreshToken', null, {
           domain: currentDomain,
           maxAge: 0,
@@ -187,26 +207,25 @@ class UserController {
         })
       }
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   async forgot(ctx) {
-    const data = ctx.request.body
-    const emailValid = validateEmail(data.email)
-    if (!emailValid || !data.email) {
-      ctx.throw(422, 'Email format is invalid')
-    }
-    const exist = await User.exists({ email: data.email })
-    // If the email does not exist, we send a generic message. No further action is taken.
-    if (!exist) {
-      ctx.throw(200, {
-        message:
-          'If an account is found, you will receive an email with reset password instructions.',
-      })
+    const {email} = ctx.request.body
+    const emailValid = validateRequired(email)
+
+    if (!emailValid) {
+      ctx.throw(422, 'Invalid data received.')
     }
 
     try {
+      const exist = await User.exists({email: email})
+      // If the email does not exist, we send a generic message. No further action is taken.
+      if (!exist) {
+        ctx.throw(200, 'If an account is found, you will receive an email with reset password instructions.')
+      }
+
       const token = jwt.sign({}, passwordResetSecrete, {
         expiresIn: '30m',
       })
@@ -214,34 +233,27 @@ class UserController {
         passwordResetToken: token,
       }
       const user = await User.findOneAndUpdate(
-        { email: data.email },
+        {email: email},
         resetData,
-        { returnOriginal: false }
+        {returnOriginal: false}
       )
-      if (!user) {
-        ctx.throw(422, 'Email not found.')
-      }
 
       await sendForgotPassword(user.email, token)
-      ctx.body = { status: 200, message: `Email sent to ${user.email}` }
+      ctx.body = {status: 200, message: `Email sent to ${user.email}`}
+
     } catch (err) {
-      if (err.code === 401) {
-        ctx.throw(
-          'Oops! something is not right. We are having issues sending your inquiry'
-        )
-      }
-      ctx.throw(err.code || 422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   async resetPassword(ctx) {
-    const { passwordResetToken, password } = ctx.request.body
+    const {passwordResetToken, password} = ctx.request.body
     const passwordValid = validateRequired(password)
     if (!passwordValid) {
       ctx.throw(422, 'Password is required.')
     }
 
-    await jwt.verify(passwordResetToken, passwordResetSecrete, async function(
+    await jwt.verify(passwordResetToken, passwordResetSecrete, async function (
       err
     ) {
       if (err) {
@@ -268,36 +280,36 @@ class UserController {
           }
         }
       } catch (err) {
-        ctx.throw(422, mongoError(err))
+        ctx.throw(422, mongoErrorFormat(err))
       }
     })
   }
 
   async updatePassword(ctx) {
-    const { _id, password } = ctx.request.body
+    const {_id, password} = ctx.request.body
     try {
-      const user = await User.findOne({ _id: _id })
+      const user = await User.findOne({_id: _id})
       if (user) {
         user.password = password
         const res = await user.save()
         if (!res) {
           ctx.throw(422, 'Oops something went wrong, please try again.')
         }
-        ctx.body = { status: 200, message: 'Password was updated.' }
+        ctx.body = {status: 200, message: 'Password was updated.'}
       }
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   async getProfile(ctx) {
-    const { _id } = ctx.request.body
+    const {_id} = ctx.request.body
     try {
-      return (ctx.body = await User.findOne({ _id: _id }).select(
+      return (ctx.body = await User.findOne({_id: _id}).select(
         'name email about website role location gender avatar createdAt _id'
       ))
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
@@ -314,10 +326,10 @@ class UserController {
     // we do not allow name or email updates.
     if (name || email) ctx.throw(422, 'Invalid request received.')
 
-    const userObject = { about, website, location, gender }
+    const userObject = {about: about ? about : null, website, location: location ? location : null, gender}
 
     try {
-      let user = await User.findOneAndUpdate({ _id: _id }, userObject, {
+      let user = await User.findOneAndUpdate({_id: _id}, userObject, {
         new: true,
         runValidators: true,
         context: 'query',
@@ -327,23 +339,23 @@ class UserController {
       }
       ctx.body = user.toAuthJSON()
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
   async deleteUser(ctx) {
     try {
       const userId = ctx.request.body._id
-      const deleteUser = await User.deleteOne({ _id: userId })
+      const deleteUser = await User.deleteOne({_id: userId})
       if (deleteUser) {
-        ctx.cookies.set('token', null, { domain: currentDomain })
-        ctx.cookies.set('refreshToken', null, { domain: currentDomain })
-        ctx.cookies.set('user', null, { domain: currentDomain })
+        ctx.cookies.set('token', null, {domain: currentDomain})
+        ctx.cookies.set('refreshToken', null, {domain: currentDomain})
+        ctx.cookies.set('user', null, {domain: currentDomain})
         ctx.state.user = null
-        ctx.body = { status: 200, message: 'Success!' }
+        ctx.body = {status: 200, message: 'Success!'}
       }
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
@@ -363,7 +375,7 @@ class UserController {
         users: users,
       })
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
@@ -380,7 +392,7 @@ class UserController {
         name: 1,
       }))
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
@@ -388,7 +400,7 @@ class UserController {
     try {
       return (ctx.body = await User.countDocuments({}))
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 
@@ -399,15 +411,15 @@ class UserController {
         _id: ctx.params.id,
       }).select('_id name email avatar createdAt')
 
-      const blogs = await Blog.find({ postedBy: user._id })
+      const blogs = await Blog.find({postedBy: user._id})
         .populate('categories', 'name slug')
         .populate('tags', 'name slug')
         .populate('postedBy', 'id name')
         .select('title slug excerpt categories avatar tags postedBy createdAt')
 
-      return (ctx.body = { user, blogs })
+      return (ctx.body = {user, blogs})
     } catch (err) {
-      ctx.throw(422, mongoError(err))
+      ctx.throw(422, mongoErrorFormat(err))
     }
   }
 }

@@ -31,7 +31,7 @@ export function verifyJWT(token) {
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const requestHost = isDev ? process.env.DEV_HOST : process.env.LIVE_HOST
+const requestHost = isDev ? process.env.ALLOWED_DEV_DOMAIN : process.env.ALLOWED_LIVE_DOMAIN
 
 //sendgrid templates
 const supportTemplate = process.env.SENDGRID_SUPPORT
@@ -47,7 +47,7 @@ export async function accountActivationEmail(email, token) {
     from: appEmail,
     subject: 'Account Activation',
     html: `
-            <strong>Welcome to  ${appName}.<br/><br/> Please click on the button below to activate your account. If you did not request this, please ignore this email.<br/><br/></strong>
+            <strong>Welcome to  ${appName}<br/><br/> Please click on the button below to activate your account. If you did not request this, please ignore this email.<br/><br/></strong>
             <a href="${link}">ACCOUNT ACTIVATION LINK</a>
           `,
   }
