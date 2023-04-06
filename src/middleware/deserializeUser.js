@@ -28,16 +28,18 @@ async function deserializeUser(ctx, next) {
   // expired token but valid access token
   const { payload: refresh } =
     expired && refreshToken ? await verifyJWT(refreshToken) : { payload: null }
+
   if (!refresh) {
     return next()
   }
 
-  const session = await getSession(refresh.userId)
+  const id = refresh.userId.toString()
+  const session = await getSession(id)
 
   if (!session) {
     return next()
   }
-  const newToken = signJWT({ userSession: session }, '30s')
+  const newToken = signJWT({ userSession: session }, '5s')
 
   ctx.cookies.set('token', newToken, {
     domain: currentDomain,
@@ -45,6 +47,7 @@ async function deserializeUser(ctx, next) {
     httpOnly: true,
     secure: true,
   })
+
   const data = verifyJWT(newToken).payload
   ctx.state.user = data.userSession
 

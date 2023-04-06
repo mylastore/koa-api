@@ -1,10 +1,6 @@
 import User from '../models/User'
 import {
-  accountActivationEmail,
-  sendForgotPassword,
-  gravatar,
-  sendNewUserEmail,
-  signJWT,
+  accountActivationEmail, sendForgotPassword, gravatar, sendNewUserEmail, signJWT,
 } from '../middleware/utils'
 import jwt from 'jsonwebtoken'
 import {validateRequired} from '../middleware/validate'
@@ -42,20 +38,13 @@ class UserController {
       // don't validate "about"
       const unset = {$unset: {about: 1, location: 1}};
       const userData = new User({
-        email,
-        name,
-        password
+        email, name, password
       }, unset)
       // validate signup data
       await userData.validate()
-      const token = await jwt.sign(
-        {name, email, password},
-        userActivationSecret,
-        {expiresIn: '60m'}
-      )
+      const token = await jwt.sign({name, email, password}, userActivationSecret, {expiresIn: '60m'})
       ctx.body = {
-        status: 200,
-        message: `An email has been sent to ${email}. Please validate to activate account.`,
+        status: 200, message: `An email has been sent to ${email}. Please validate to activate account.`,
       }
       return await accountActivationEmail(email, token)
     } catch (err) {
@@ -75,12 +64,7 @@ class UserController {
       const {name, email, password} = decoded
       const avatar = gravatar(email)
       const obj = {
-        name,
-        email,
-        password,
-        avatar,
-        emailVerificationToken: undefined,
-        emailVerified: true,
+        name, email, password, avatar, emailVerificationToken: undefined, emailVerified: true,
       }
       const user = new User(obj)
 
@@ -90,8 +74,7 @@ class UserController {
           // Notify owner when a user registers
           await sendNewUserEmail(name, email)
           ctx.body = {
-            status: 200,
-            message: 'Account is now active. Please login.',
+            status: 200, message: 'Account is now active. Please login.',
           }
         }
       } catch (err) {
@@ -109,8 +92,7 @@ class UserController {
       ctx.throw(422, 'Invalid data received.')
     }
     const userData = {
-      password,
-      email
+      password, email
     }
 
     try {
@@ -124,32 +106,23 @@ class UserController {
       }
 
       if (!(await user.comparePassword(password))) {
-        ctx.throw(422, {message: 'Invalid data received.'})
+        ctx.throw(422, {message: 'Password or email is incorrect.'})
       }
 
       const session = {
-        userId: user._id,
-        valid: true,
-        name: user.name,
-        role: user.role,
+        userId: user._id, valid: true, name: user.name, role: user.role,
       }
       //create or update the userSession
-      const res = await User.findOneAndUpdate(
-        {email},
-        {$set: {userSession: session}}
-      )
+      const res = await User.findOneAndUpdate({email}, {$set: {userSession: session}}, {new: true})
+
       if (res) {
         // create access token and set it in a secure cookie
-        const token = signJWT(
-          {
-            userSession: {
-              userId: user._id,
-              name: user.name,
-              role: user.role,
-            },
+        const token = signJWT({
+          userSession: {
+            userId: user._id, name: user.name, role: user.role,
           },
-          '30s'
-        )
+        }, '5s')
+
         ctx.cookies.set('token', token, {
           domain: currentDomain,
           maxAge: 300000, // 5 minutes
@@ -180,7 +153,7 @@ class UserController {
         })
 
         ctx.state.user = userData
-        return (ctx.body = {user: userData})
+        return ctx.body = {user: userData}
       }
     } catch (err) {
       ctx.throw(422, mongoErrorFormat(err))
@@ -189,21 +162,16 @@ class UserController {
 
   async logOut(ctx) {
     try {
-      const res = await User.findOneAndUpdate(
-        {_id: ctx.request.body.id},
-        {$set: {'userSession.valid': false}}
-      )
+      const res = await User.findOneAndUpdate({_id: ctx.request.body.id}, {$set: {'userSession.valid': false}})
       if (res) {
         ctx.cookies.set('token', null, {domain: currentDomain, maxAge: 0})
         ctx.cookies.set('user', null, {domain: currentDomain, maxAge: 0})
         ctx.cookies.set('refreshToken', null, {
-          domain: currentDomain,
-          maxAge: 0,
+          domain: currentDomain, maxAge: 0,
         })
         ctx.state.user = null
         return (ctx.body = {
-          status: 200,
-          message: 'Success!',
+          status: 200, message: 'Success!',
         })
       }
     } catch (err) {
@@ -232,11 +200,7 @@ class UserController {
       let resetData = {
         passwordResetToken: token,
       }
-      const user = await User.findOneAndUpdate(
-        {email: email},
-        resetData,
-        {returnOriginal: false}
-      )
+      const user = await User.findOneAndUpdate({email: email}, resetData, {returnOriginal: false})
 
       await sendForgotPassword(user.email, token)
       ctx.body = {status: 200, message: `Email sent to ${user.email}`}
@@ -253,14 +217,9 @@ class UserController {
       ctx.throw(422, 'Password is required.')
     }
 
-    await jwt.verify(passwordResetToken, passwordResetSecrete, async function (
-      err
-    ) {
+    await jwt.verify(passwordResetToken, passwordResetSecrete, async function (err) {
       if (err) {
-        ctx.throw(
-          401,
-          'Expired or invalid link! Please try resetting your password again'
-        )
+        ctx.throw(401, 'Expired or invalid link! Please try resetting your password again')
       }
       try {
         let user = await User.findOne({
@@ -275,8 +234,7 @@ class UserController {
         const res = await user.save()
         if (res) {
           ctx.body = {
-            status: 200,
-            message: 'Password was updated successfully.',
+            status: 200, message: 'Password was updated successfully.',
           }
         }
       } catch (err) {
@@ -305,9 +263,7 @@ class UserController {
   async getProfile(ctx) {
     const {_id} = ctx.request.body
     try {
-      return (ctx.body = await User.findOne({_id: _id}).select(
-        'name email about website role location gender avatar createdAt _id'
-      ))
+      return (ctx.body = await User.findOne({_id: _id}).select('name email about website role location gender avatar createdAt _id'))
     } catch (err) {
       ctx.throw(422, mongoErrorFormat(err))
     }
@@ -315,24 +271,18 @@ class UserController {
 
   async updateAccount(ctx) {
     const {
-      _id,
-      about,
-      website,
-      location,
-      gender,
-      name,
-      email,
+      _id, about, website, location, gender, name, email,
     } = ctx.request.body
     // we do not allow name or email updates.
     if (name || email) ctx.throw(422, 'Invalid request received.')
 
-    const userObject = {about: about ? about : null, website, location: location ? location : null, gender}
+    const userObject = {
+      about, location, website, gender
+    }
 
     try {
       let user = await User.findOneAndUpdate({_id: _id}, userObject, {
-        new: true,
-        runValidators: true,
-        context: 'query',
+        new: true, runValidators: true, context: 'query',
       })
       if (!user) {
         ctx.throw(404, 'User not found')
@@ -370,9 +320,7 @@ class UserController {
         .limit(perPage)
       const totalItems = await User.countDocuments({})
       return (ctx.body = {
-        totalItems: totalItems,
-        perPage: perPage,
-        users: users,
+        totalItems: totalItems, perPage: perPage, users: users,
       })
     } catch (err) {
       ctx.throw(422, mongoErrorFormat(err))
@@ -384,12 +332,7 @@ class UserController {
       return (ctx.body = await User.findById({
         _id: ctx.params.id,
       }).select({
-        profile: 1,
-        role: 1,
-        avatar: 1,
-        createdAt: 1,
-        about: 1,
-        name: 1,
+        profile: 1, role: 1, avatar: 1, createdAt: 1, about: 1, name: 1,
       }))
     } catch (err) {
       ctx.throw(422, mongoErrorFormat(err))

@@ -41,14 +41,11 @@ const userSchema = new mongoose.Schema(
     location: {
       type: String,
       required: false,
-      default: '',
-      minlength: [2, 'Location minimum length is 2 characters'],
       maxlength: [60, 'Location maximum length is 60 characters'],
     },
     about: {
       type: String,
-      default: '',
-      minlength: [2, 'About minimum length is 2 characters'],
+      required: false,
       maxlength: [2000, 'About maximum length is 2000 characters'],
     },
     website: {
@@ -65,6 +62,7 @@ const userSchema = new mongoose.Schema(
 
   { timestamps: true }
 )
+
 
 userSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, 10)
