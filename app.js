@@ -9,7 +9,9 @@ const https = require('https')
 let options
 
 require('@babel/polyfill')
+
 if (isDev) {
+  // needed to run the app
   require('@babel/register')
   options = {
     key: fs.readFileSync(process.env.LOCAL_KEY),

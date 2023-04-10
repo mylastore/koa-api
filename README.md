@@ -6,7 +6,7 @@ KoaJS backend has a fleshed-out user login, signup, forgot password, email verif
 - Koa 2.13.0
 - Fully written using async/await & Classes
 - Koa-Router
-- Koa-Bodyparser
+- Koa-Body-parser
 - KCors
 - Koa-Json-Error for JSON requests/responses
 - Bcrypt

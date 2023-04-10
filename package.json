@@ -11,13 +11,12 @@
     "start": "NODE_ENV=development nodemon app.js --exec",
     "live": "NODE_ENV=production nodemon app.js --exec",
     "test": "NODE_ENV=testing jest --forceExit",
-    "build": "NODE_ENV=production babel src -d build && npm run format",
+    "build": "NODE_ENV=production npx babel -d npm run format && build",
     "format": "prettier --write --print-width 80 --single-quote --trailing-comma es5 --tab-width 2 --no-semi 'app.js' 'src/**/*.js' 'tests/**/*.js'",
     "clean": "npm cache clean --force",
     "seed": "node -r esm src/seed/seed.js"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^12.0.0",
     "@sendgrid/mail": "^7.4.6",
@@ -45,10 +44,11 @@
     "string-strip-html": "^6.0.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.18.10",
-    "@babel/core": "^7.19.0",
-    "@babel/preset-env": "^7.19.0",
-    "@babel/register": "^7.18.9",
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.4",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/register": "^7.21.0",
     "esm": "^3.2.25",
     "nodemon": "^2.0.22",
     "prettier": "^1.19.1"

@@ -15,7 +15,7 @@ import userRouter from './routes/user'
 
 const isDev = process.env.NODE_ENV === 'development'
 const allowedDomains = isDev
-  ? [process.env.ALLOWED_DEV_DOMAIN]
+  ? [process.env.ALLOWED_DEV_DOMAIN, process.env.ALLOWED_DEV_DOMAIN_II]
   : [process.env.ALLOWED_LIVE_DOMAIN]
 const mongoDB = isDev ? process.env.DB_LOCAL : process.env.DB_URI
 
