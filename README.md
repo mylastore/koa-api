@@ -21,7 +21,7 @@ KoaJS backend has a fleshed-out user login, signup, forgot password, email verif
 
 ## Installing / Getting started
 - Important! rename example.env to .env and enter your credentials & make sure you have mongoDB running.
-- Create certs & keys directories inside the secrets directory and genera local certs and key inside. Secure cookie are used on local development (to simulate production issue).
+- Create certs & keys directories inside the secrets directory and generate local certs and key inside. Secure cookie are used on local development (to simulate production issue).
 
 ``` bash
 # Install dependencies
