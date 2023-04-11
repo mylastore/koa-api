@@ -8,8 +8,6 @@ const fs = require('fs')
 const https = require('https')
 let options
 
-require('@babel/polyfill')
-
 if (isDev) {
   // needed to run the app
   require('@babel/register')
