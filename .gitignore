@@ -8,7 +8,3 @@ production.env
 .DS_Store
 *.pem
 .fleet
-keys/id/id_rsa
-keys/id/id_rsa.pub
-certs/localhost/localhost.crt
-certs/localhost/localhost.key
