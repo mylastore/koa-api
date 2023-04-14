@@ -1,12 +1,13 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
-const { ObjectId } = mongoose.Schema
+
+const {ObjectId} = mongoose.Schema
 
 const sessionSchema = new mongoose.Schema({
   userId: ObjectId,
   role: String,
   name: String,
-  valid: { type: Boolean, default: false },
+  valid: {type: Boolean, default: false},
 })
 
 const userSchema = new mongoose.Schema(
@@ -26,7 +27,7 @@ const userSchema = new mongoose.Schema(
         'Email is not valid',
       ],
     },
-    role: { type: String, default: 'user' },
+    role: {type: String, default: 'user'},
     password: {
       type: String,
       match: [
@@ -35,16 +36,14 @@ const userSchema = new mongoose.Schema(
       ],
     },
     passwordResetToken: String,
-    emailVerified: { type: Boolean, default: false },
-    gender: { type: String, default: '' },
+    emailVerified: {type: Boolean, default: false},
+    gender: {type: String, default: ''},
     location: {
       type: String,
-      required: false,
       maxlength: [60, 'Location maximum length is 60 characters'],
     },
     about: {
       type: String,
-      required: false,
       maxlength: [2000, 'About maximum length is 2000 characters'],
     },
     website: {
@@ -56,24 +55,24 @@ const userSchema = new mongoose.Schema(
       ],
     },
     userSession: sessionSchema,
-    avatar: { type: String, default: process.env.DEFAULT_AVATAR },
+    avatar: {type: String, default: process.env.DEFAULT_AVATAR},
   },
 
-  { timestamps: true }
+  {timestamps: true}
 )
 
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 10)
   next()
 })
 
 //Every user have aces to this methods
-userSchema.methods.comparePassword = async function(rawPassword) {
+userSchema.methods.comparePassword = async function (rawPassword) {
   return await bcrypt.compare(rawPassword, this.password)
 }
 
-userSchema.methods.toAuthJSON = function() {
+userSchema.methods.toAuthJSON = function () {
   return {
     user: {
       name: this.name,

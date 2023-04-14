@@ -3,7 +3,7 @@ import {
   accountActivationEmail, sendForgotPassword, gravatar, sendNewUserEmail, signJWT,
 } from '../middleware/utils'
 import jwt from 'jsonwebtoken'
-import {validateRequired} from '../middleware/validate'
+import {isEmpty} from '../middleware/validate'
 import mongoErrorFormat from "../middleware/mongoErrorFormat";
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -19,15 +19,15 @@ class UserController {
   // prepare email verification token
   async accountActivation(ctx) {
     const {name, email, password, passwordConfirmation} = ctx.request.body
-    const emailValid = validateRequired(email)
-    const passwordValid = validateRequired(password)
-    const nameValid = validateRequired(name)
+    const emailValid = !isEmpty(email)
+    const passwordValid = !isEmpty(password)
+    const nameValid = !isEmpty(name)
 
-    if (!emailValid || !passwordValid || !nameValid) {
-      ctx.throw(422, 'Invalid data received')
-    }
+    // if (!emailValid || !passwordValid || !nameValid) {
+    //   ctx.throw(422, 'Invalid data received')
+    // }
     if (password !== passwordConfirmation) {
-      ctx.throw(422, 'Password & Confirm Password does not match.')
+      ctx.throw(422, 'Password & Confirmation Password does not match.')
     }
 
     try {
@@ -35,13 +35,15 @@ class UserController {
       if (user) {
         ctx.throw(422, 'An active account already exist.')
       }
-      // don't validate "about"
+
+      // we use $unset to not validate "about" & "location"
       const unset = {$unset: {about: 1, location: 1}};
       const userData = new User({
         email, name, password
-      }, unset)
+      })
       // validate signup data
       await userData.validate()
+
       const token = await jwt.sign({name, email, password}, userActivationSecret, {expiresIn: '60m'})
       ctx.body = {
         status: 200, message: `An email has been sent to ${email}. Please validate to activate account.`,
@@ -85,8 +87,9 @@ class UserController {
 
   async login(ctx) {
     const {password, email} = ctx.request.body
-    const isPasswordValid = validateRequired(password)
-    const isEmailValid = validateRequired(email)
+    const isPasswordValid = !isEmpty(password)
+    const isEmailValid = !isEmpty(email)
+
 
     if (!isPasswordValid || !isEmailValid) {
       ctx.throw(422, 'Invalid data received.')
@@ -181,7 +184,7 @@ class UserController {
 
   async forgot(ctx) {
     const {email} = ctx.request.body
-    const emailValid = validateRequired(email)
+    const emailValid = !isEmpty(email)
 
     if (!emailValid) {
       ctx.throw(422, 'Invalid data received.')
@@ -212,7 +215,7 @@ class UserController {
 
   async resetPassword(ctx) {
     const {passwordResetToken, password} = ctx.request.body
-    const passwordValid = validateRequired(password)
+    const passwordValid = !isEmpty(password)
     if (!passwordValid) {
       ctx.throw(422, 'Password is required.')
     }
