@@ -19,32 +19,31 @@ class UserController {
   // prepare email verification token
   async accountActivation(ctx) {
     const {name, email, password, passwordConfirmation} = ctx.request.body
-    const emailValid = !isEmpty(email)
-    const passwordValid = !isEmpty(password)
-    const nameValid = !isEmpty(name)
 
-    // if (!emailValid || !passwordValid || !nameValid) {
-    //   ctx.throw(422, 'Invalid data received')
-    // }
+    const emailValid = isEmpty(email)
+    const passwordValid = isEmpty(password)
+    const nameValid = isEmpty(name)
+
+    if (!emailValid || !passwordValid || !nameValid) {
+      ctx.throw(422, 'Invalid data received. Please review our requirements')
+    }
+
     if (password !== passwordConfirmation) {
       ctx.throw(422, 'Password & Confirmation Password does not match.')
     }
 
+    const userData = {name, email, password}
+
     try {
+      await User.validate(userData)
+
       const user = await User.exists({email})
+
       if (user) {
         ctx.throw(422, 'An active account already exist.')
       }
 
-      // we use $unset to not validate "about" & "location"
-      const unset = {$unset: {about: 1, location: 1}};
-      const userData = new User({
-        email, name, password
-      })
-      // validate signup data
-      await userData.validate()
-
-      const token = await jwt.sign({name, email, password}, userActivationSecret, {expiresIn: '60m'})
+      const token = await jwt.sign({name, email, password}, userActivationSecret, {expiresIn: '15m'})
       ctx.body = {
         status: 200, message: `An email has been sent to ${email}. Please validate to activate account.`,
       }

@@ -1,5 +1,5 @@
 export function isEmpty(str) {
-  return str.length === 0
+  return typeof str === 'string' && str !== '';
 }
 
 // // password must be 8 characters or more, must have a capital letter and 1 special character
