@@ -3,7 +3,7 @@ import {
   accountActivationEmail, sendForgotPassword, gravatar, sendNewUserEmail, signJWT,
 } from '../middleware/utils'
 import jwt from 'jsonwebtoken'
-import {isEmpty} from '../middleware/validate'
+import {notEmpty} from '../middleware/validate'
 import mongoErrorFormat from "../middleware/mongoErrorFormat";
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -20,9 +20,9 @@ class UserController {
   async accountActivation(ctx) {
     const {name, email, password, passwordConfirmation} = ctx.request.body
 
-    const emailValid = isEmpty(email)
-    const passwordValid = isEmpty(password)
-    const nameValid = isEmpty(name)
+    const emailValid = notEmpty(email)
+    const passwordValid = notEmpty(password)
+    const nameValid = notEmpty(name)
 
     if (!emailValid || !passwordValid || !nameValid) {
       ctx.throw(422, 'Invalid data received. Please review our requirements')
@@ -86,19 +86,13 @@ class UserController {
 
   async login(ctx) {
     const {password, email} = ctx.request.body
-    const isPasswordValid = !isEmpty(password)
-    const isEmailValid = !isEmpty(email)
 
-
-    if (!isPasswordValid || !isEmailValid) {
+    if (!notEmpty(password)|| !notEmpty(email)) {
       ctx.throw(422, 'Invalid data received.')
     }
-    const userData = {
-      password, email
-    }
-
+    const userData = { password, email }
     try {
-      // validate email & password
+      // validate email & password requirements
       await User.validate(userData)
 
       // we need the user data
@@ -183,7 +177,7 @@ class UserController {
 
   async forgot(ctx) {
     const {email} = ctx.request.body
-    const emailValid = !isEmpty(email)
+    const emailValid = !notEmpty(email)
 
     if (!emailValid) {
       ctx.throw(422, 'Invalid data received.')
@@ -214,7 +208,7 @@ class UserController {
 
   async resetPassword(ctx) {
     const {passwordResetToken, password} = ctx.request.body
-    const passwordValid = !isEmpty(password)
+    const passwordValid = !notEmpty(password)
     if (!passwordValid) {
       ctx.throw(422, 'Password is required.')
     }

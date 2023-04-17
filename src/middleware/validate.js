@@ -1,4 +1,4 @@
-export function isEmpty(str) {
+export function notEmpty(str) {
   return typeof str === 'string' && str !== '';
 }
 
