@@ -14,7 +14,7 @@
     "build": "NODE_ENV=production npx babel -d npm run format && build",
     "format": "prettier --write --print-width 80 --single-quote --trailing-comma es5 --tab-width 2 --no-semi 'app.js' 'src/**/*.js' 'tests/**/*.js'",
     "clean": "npm cache clean --force",
-    "seed": "node -r esm src/seed/seed.js"
+    "seed": "node -r esm ./src/seed/seed.js"
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",

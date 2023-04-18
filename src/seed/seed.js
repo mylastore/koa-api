@@ -1,10 +1,11 @@
 'use strict'
 
-require('dotenv').config()
+import dotenv from 'dotenv'
+dotenv.config()
 
 import mongoose from 'mongoose'
-import User from '../models/User'
-import data from '../seed/data'
+import User from '../models/User.js'
+import data from './data.js'
 
 /**
  * Class - deletes current data and seed new one
@@ -19,13 +20,13 @@ class SeedData {
 
   async cleanDb() {
     for (let model of this.models) {
-      await model.deleteMany({}, () => {})
+      await model.deleteMany({})
     }
   }
 
   async pushDataToDb() {
     await this.users.forEach(async user => {
-      await new User(user).save(() => {})
+      await new User(user).save()
     })
     console.log('Database Populated!')
   }
@@ -36,19 +37,14 @@ class SeedData {
   }
 }
 
-const dbUri =
-  process.env.NODE_ENV === 'development'
-    ? process.env.DB_LOCAL
-    : process.env.DB_URI
-mongoose
-  .connect(dbUri, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(async () => {
+const uri = process.env.NODE_ENV === 'development' ? process.env.DB_LOCAL : process.env.DB_URI
+const options = { useNewUrlParser: true, useUnifiedTopology: true,}
+main().catch(err => console.log(err));
+
+async function main() {
+  if( await mongoose.connect(uri, options)){
     const db = new SeedData()
     await db.seedDb()
     console.log('You can close the connection by pressing ctr+c')
-  })
-  .catch(err => console.log(err))
+  }
+}
