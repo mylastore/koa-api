@@ -12,31 +12,33 @@ const data = {
       _id: new mongoose.Types.ObjectId(),
       email: 'mrtonyq@me.com',
       password: 'Password',
-      name: 'David Montoya',
+      name: 'Super Admin',
+      role: 'admin',
+    },
+    {
+      _id: new mongoose.Types.ObjectId(),
+      email: 'me@me.com',
+      password: 'Password',
+      name: 'Vitamin Alex',
+      role: 'admin'
+    },
+    {
+      _id: new mongoose.Types.ObjectId(),
+      email: 'me1@me.com',
+      password: 'Password',
+      name: 'Jose Medina',
     },
     {
       _id: new mongoose.Types.ObjectId(),
       email: 'me2@me.com',
       password: 'Password',
-      name: 'Jose Lima',
+      name: 'Tina Turner',
     },
     {
       _id: new mongoose.Types.ObjectId(),
       email: 'me3@me.com',
       password: 'Password',
-      name: 'Maria Lopez',
-    },
-    {
-      _id: new mongoose.Types.ObjectId(),
-      email: 'me4@me.com',
-      password: 'Password',
-      name: 'Tina Turner',
-    },
-    {
-      _id: new mongoose.Types.ObjectId(),
-      email: 'me5@me.com',
-      password: 'Password',
-      name: 'Henry Carpio',
+      name: 'Henry De Caprio',
     },
   ],
 }

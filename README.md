@@ -42,7 +42,7 @@ npm run format
 # Runs tests TODO
 npm run test
 
-# Run the following to seed users for testing the app. !important will rewrite MongoDB data
+# TODO need to refactor. But for now add type: module on the package.json before you run the following to seed users for testing the app. !important will rewrite MongoDB data
 npm run seed
 ```
 

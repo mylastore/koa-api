@@ -39,10 +39,12 @@ const userSchema = new mongoose.Schema(
     emailVerified: {type: Boolean, default: false},
     gender: {type: String, default: ''},
     location: {
+      default: '',
       type: String,
       maxlength: [60, 'Location maximum length is 60 characters'],
     },
     about: {
+      default: '',
       type: String,
       maxlength: [2000, 'About maximum length is 2000 characters'],
     },
